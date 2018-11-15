@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Cliente, User, Empresa
-from .serializers import ClienteSerializer, UserSerializer, EmpresaSerializer
+from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Indicador, Resultado
+from .serializers import ClienteSerializer, UserSerializer, EmpresaSerializer, EmpreendimentoSerializer, ReferenciaSerializer, TipoIndicadorSerializer, IndicadorSerializer, ResultadoSerializer
 
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
@@ -13,3 +13,23 @@ class EmpresaViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+class EmpreendimentoViewSet(viewsets.ModelViewSet):
+    queryset = Empreendimento.objects.all()
+    serializer_class = EmpreendimentoSerializer
+
+class ReferenciaViewSet(viewsets.ModelViewSet):
+    queryset = Referencia.objects.all()
+    serializer_class = ReferenciaSerializer
+
+class TipoIndicadorViewSet(viewsets.ModelViewSet):
+    queryset = TipoIndicador.objects.all()
+    serializer_class = TipoIndicadorSerializer
+
+class IndicadorViewSet(viewsets.ModelViewSet):
+    queryset = Indicador.objects.all()
+    serializer_class = IndicadorSerializer
+
+class ResultadoViewSet(viewsets.ModelViewSet):
+    queryset = Resultado.objects.all()
+    serializer_class = ResultadoSerializer
