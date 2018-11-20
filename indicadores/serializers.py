@@ -50,3 +50,11 @@ class ResultadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resultado
         fields = '__all__'
+
+
+
+
+
+
+
+# Ewerton Escreve aqui em baixo:

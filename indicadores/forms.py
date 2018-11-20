@@ -11,3 +11,9 @@ class EmpreendimentoForm(forms.ModelForm):
     class Meta:
         model = Empreendimento
         fields = '__all__'
+
+
+
+
+# Ewerton Escreve aqui em baixo:
+

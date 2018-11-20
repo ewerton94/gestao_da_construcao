@@ -60,3 +60,18 @@ def form_editar_empresas(request, id):
 def criar_empreendimento(request):
     return generic_create_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm)
 
+
+
+
+
+
+
+
+
+
+
+
+
+# Ewerton Escreve aqui em baixo:
+
+
