@@ -12,6 +12,7 @@ EXTRA_FIELDS_DICT = {
 def get_schema(form):
     schema = Schema().render(form)
     for field in schema['schema']['fields']:
-        field['inputType'] = EXTRA_FIELDS_DICT.get(field['model'], field['type'])
-        field['type']= SCHEMA_DICT[field['type']]
+        if field['type'] in SCHEMA_DICT.keys():
+            field['inputType'] = EXTRA_FIELDS_DICT.get(field['model'], field['type'])
+            field['type']= SCHEMA_DICT[field['type']]
     return schema

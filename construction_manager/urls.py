@@ -16,14 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from indicadores.routers import router
-from indicadores.views import form_empresas, form_editar_empresas
+from indicadores.views import form_empresas, form_editar_empresas, criar_empreendimento
 
 urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('form_empresas/', form_empresas, name="form_empresas"),
-    path('form_empresas/<int:id>', form_editar_empresas, name="form_editar_empresas")
+    path('form_empresas/<int:id>', form_editar_empresas, name="form_editar_empresas"),
+    path('criar_empreendimento/', criar_empreendimento, name="form_empresas"),
+    path('form_empreendimentos/<int:id>', form_editar_empresas, name="form_editar_empresas"),
 
 ]
 

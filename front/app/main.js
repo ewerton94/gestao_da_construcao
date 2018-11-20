@@ -17,7 +17,10 @@ const routes = [
   { path: '/bar', component: Bar },
   { path: '/empresas', component: Empresas },
   { path: '/nova-empresa', component: NovaEmpresa },
-  { path: '/editar-empresa/:id', component: EditarEmpresa, name: 'editar-empresa'}
+  { path: '/editar-empresa/:id', component: EditarEmpresa, name: 'editar-empresa'},
+  { path: '/empreendimentos', component: Empresas },
+  { path: '/novo-empreendimento', component: NovoEmpreendimento },
+  { path: '/editar-empreendimento/:id', component: EditarEmpresa, name: 'editar-empresa'}
 
 
 ]
