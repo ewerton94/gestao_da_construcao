@@ -21,7 +21,7 @@ class Empresa(models.Model):
     email = models.CharField(max_length=500)
     cnpj = models.IntegerField()
     telefone = models.IntegerField()
-    codigo = models.SlugField(null=True, unique=True)
+    codigo = models.SlugField(null=True, unique=True, blank=True)
 
     def __str__(self):
         return self.nome
@@ -65,7 +65,7 @@ class Indicador(models.Model):
     titulo = models.CharField(max_length=500)
     descricao = models.TextField()
     unidade_de_medida = models.CharField(max_length=500)
-    
+
     def __str__(self):
         return self.titulo + ' (' + self.unidade_de_medida + ')'
 
