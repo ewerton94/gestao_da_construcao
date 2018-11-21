@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .viewsets import ClienteViewSet, EmpresaViewSet, UserViewSet, EmpreendimentoViewSet, ReferenciaViewSet, TipoIndicadorViewSet, IndicadorViewSet, ResultadoViewSet
+from .viewsets import ClienteViewSet, EmpresaViewSet, UserViewSet, EmpreendimentoViewSet, ReferenciaViewSet, TipoIndicadorViewSet, IndicadorViewSet, ResultadoViewSet, PesquisadorViewSet
 
 router = routers.DefaultRouter()
 
@@ -10,3 +10,4 @@ router.register('referencias', ReferenciaViewSet, base_name='referencia')
 router.register('tipoindicadores', TipoIndicadorViewSet, base_name='tipoindicador')
 router.register('indicadores', IndicadorViewSet, base_name='indicador')
 router.register('resultados', ResultadoViewSet, base_name='resultado')
+router.register('pesquisadores', PesquisadorViewSet, base_name='pesquisador')

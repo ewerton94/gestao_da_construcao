@@ -3,11 +3,11 @@ from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 
-from .forms import EmpresaForm, EmpreendimentoForm
+from .forms import ClienteForm, UserForm, EmpresaForm, EmpreendimentoForm, ReferenciaForm, TipoIndicadorForm, PesquisadorForm, IndicadorForm, ResultadoForm
 from .schemas import get_schema
 from .exceptions import *
-from .serializers import EmpresaSerializer, EmpreendimentoSerializer
-from .models import Empresa, Empreendimento
+from .serializers import ClienteSerializer, UserSerializer, EmpresaSerializer, EmpreendimentoSerializer, ReferenciaSerializer, TipoIndicadorSerializer, IndicadorSerializer, ResultadoSerializer, PesquisadorSerializer
+from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Pesquisador, Indicador, Resultado
 
 def generic_create_view(request, Model, Serializer, Form):
     if request.method == 'POST':
@@ -60,6 +60,79 @@ def form_editar_empresas(request, id):
 def criar_empreendimento(request):
     return generic_create_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm)
 
+@api_view(['GET','POST'])
+def editar_empreendimento(request, id):
+    return generic_update_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm, id)
+
+#CLIENTE
+
+@api_view(['GET','POST'])
+def criar_cliente(request):
+    return generic_create_view(request, Cliente, ClienteSerializer, ClienteForm)
+
+@api_view(['GET','POST'])
+def editar_cliente(request, id):
+    return generic_update_view(request, Cliente, ClienteSerializer, ClienteForm, id)
+
+#USER
+
+@api_view(['GET','POST'])
+def criar_user(request):
+    return generic_create_view(request, User, UserSerializer, UserForm)
+
+@api_view(['GET','POST'])
+def editar_user(request, id):
+    return generic_update_view(request, User, UserSerializer, UserForm, id)
+
+#REFERENCIA
+
+@api_view(['GET','POST'])
+def criar_referencia(request):
+    return generic_create_view(request, Referencia, ReferenciaSerializer, ReferenciaForm)
+
+@api_view(['GET','POST'])
+def editar_referencia(request, id):
+    return generic_update_view(request, Referencia, ReferenciaSerializer, ReferenciaForm, id)
+
+#INDICADOR
+
+@api_view(['GET','POST'])
+def criar_indicador(request):
+    return generic_create_view(request, Indicador, IndicadorSerializer, IndicadorForm)
+
+@api_view(['GET','POST'])
+def editar_indicador(request, id):
+    return generic_update_view(request, Indicador, IndicadorSerializer, IndicadorForm, id)
+
+#TIPOINDICADOR
+
+@api_view(['GET','POST'])
+def criar_tipoindicador(request):
+    return generic_create_view(request, TipoIndicador, TipoIndicadorSerializer, TipoIndicadorForm)
+
+@api_view(['GET','POST'])
+def editar_tipoindicador(request, id):
+    return generic_update_view(request, TipoIndicador, TipoIndicadorSerializer, TipoIndicadorForm, id)
+
+#RESULTADO
+
+@api_view(['GET','POST'])
+def criar_resultado(request):
+    return generic_create_view(request, Resultado, ResultadoSerializer, ResultadoForm)
+
+@api_view(['GET','POST'])
+def editar_resultado(request, id):
+    return generic_update_view(request, Resultado, ResultadoSerializer, ResultadoForm, id)
+
+#PESQUISADOR
+
+@api_view(['GET','POST'])
+def criar_pesquisador(request):
+    return generic_create_view(request, Pesquisador, PesquisadorSerializer, PesquisadorForm)
+
+@api_view(['GET','POST'])
+def editar_pesquisador(request, id):
+    return generic_update_view(request, Pesquisador, PesquisadorSerializer, PesquisadorForm, id)
 
 
 
