@@ -1,4 +1,4 @@
-var Resultado = Vue.component("home-view", {
+var Resultados = Vue.component("home-view", {
     data: function () {
         return {
           resultado: []

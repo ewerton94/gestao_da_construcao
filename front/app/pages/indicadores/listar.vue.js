@@ -1,4 +1,4 @@
-var Empresas = Vue.component("home-view", {
+var Indicadores = Vue.component("home-view", {
     data: function () {
         return {
           empresas: []

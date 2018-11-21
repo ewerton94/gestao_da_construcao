@@ -22,28 +22,28 @@ const routes = [
   { path: '/editar-empresa/:id', component: EditarEmpresa, name: 'editar-empresa'},
   { path: '/empreendimentos', component: Empreendimentos },
   { path: '/novo-empreendimento', component: NovoEmpreendimento },
-  { path: '/editar-empreendimento/:id', component: EditarEmpreendimento, name: 'editar-empreendimento'}
+  { path: '/editar-empreendimento/:id', component: EditarEmpreendimento, name: 'editar-empreendimento'},
   { path: '/clientes', component: Clientes },
   { path: '/novo-cliente', component: NovoCliente },
-  { path: '/editar-cliente/:id', component: EditarCliente, name: 'editar-cliente'}
+  { path: '/editar-cliente/:id', component: EditarCliente, name: 'editar-cliente'},
   { path: '/users', component: Users },
   { path: '/novo-user', component: NovoUser },
-  { path: '/editar-user/:id', component: EditarUser, name: 'editar-user'}
+  { path: '/editar-user/:id', component: EditarUser, name: 'editar-user'},
   { path: '/referencias', component: Referencias },
   { path: '/novo-referencia', component: NovoReferencia },
-  { path: '/editar-referencia/:id', component: EditarReferencia, name: 'editar-referencia'}
+  { path: '/editar-referencia/:id', component: EditarReferencia, name: 'editar-referencia'},
   { path: '/indicadores', component: Indicadores },
   { path: '/novo-indicador', component: NovoIndicador },
-  { path: '/editar-indicador/:id', component: EditarIndicador, name: 'editar-indicador'}
+  { path: '/editar-indicador/:id', component: EditarIndicador, name: 'editar-indicador'},
   { path: '/tipoindicadores', component: TipoIndicadores },
   { path: '/novo-tipoindicador', component: NovoTipoIndicador },
-  { path: '/editar-tipoindicador/:id', component: EditarTipoIndicador, name: 'editar-tipoindicador'}
+  { path: '/editar-tipoindicador/:id', component: EditarTipoIndicador, name: 'editar-tipoindicador'},
   { path: '/resultados', component: Resultados },
   { path: '/novo-resultado', component: NovoResultado },
-  { path: '/editar-resultado/:id', component: EditarResultado, name: 'editar-resultado'}
+  { path: '/editar-resultado/:id', component: EditarResultado, name: 'editar-resultado'},
   { path: '/pesquisadors', component: Pesquisadors },
   { path: '/novo-pesquisador', component: NovoPesquisador },
-  { path: '/editar-pesquisador/:id', component: EditarPesquisador, name: 'editar-pesquisador'}
+  { path: '/editar-pesquisador/:id', component: EditarPesquisador, name: 'editar-pesquisador'},
 
 
 ]

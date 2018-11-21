@@ -1,4 +1,4 @@
-var TipoIndicador = Vue.component("home-view", {
+var TipoIndicadores = Vue.component("home-view", {
     data: function () {
         return {
           tipoindicador: []

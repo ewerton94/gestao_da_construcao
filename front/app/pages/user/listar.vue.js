@@ -1,4 +1,4 @@
-var User = Vue.component("home-view", {
+var Users = Vue.component("home-view", {
     data: function () {
         return {
           user: []

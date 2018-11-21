@@ -1,4 +1,4 @@
-var Empreendimento = Vue.component("home-view", {
+var Empreendimentos = Vue.component("home-view", {
     data: function () {
         return {
           empreendimento: []

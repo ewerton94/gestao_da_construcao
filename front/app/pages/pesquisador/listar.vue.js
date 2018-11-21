@@ -1,4 +1,4 @@
-var Pesquisador = Vue.component("home-view", {
+var Pesquisadors = Vue.component("home-view", {
     data: function () {
         return {
           pesquisador: []

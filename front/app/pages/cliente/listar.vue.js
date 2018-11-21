@@ -1,4 +1,4 @@
-var Cliente = Vue.component("home-view", {
+var Clientes = Vue.component("home-view", {
     data: function () {
         return {
           cliente: []

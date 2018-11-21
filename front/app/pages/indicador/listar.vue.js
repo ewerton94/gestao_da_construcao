@@ -1,4 +1,4 @@
-var Indicador = Vue.component("home-view", {
+var Indicadores = Vue.component("home-view", {
     data: function () {
         return {
           indicador: []

@@ -1,4 +1,4 @@
-var EditarEmpresa = Vue.component("editar-empresa-view", {
+var EditarIndicador = Vue.component("editar-empresa-view", {
     data: function () {
         return {
             model: {},

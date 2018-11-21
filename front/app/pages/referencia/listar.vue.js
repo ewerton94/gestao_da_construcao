@@ -1,4 +1,4 @@
-var Referencia = Vue.component("home-view", {
+var Referencias = Vue.component("home-view", {
     data: function () {
         return {
           referencia: []
