@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Indicador, Resultado
+from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Pesquisador, Indicador, Resultado
 
 class ClienteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -51,6 +51,11 @@ class ResultadoSerializer(serializers.ModelSerializer):
         model = Resultado
         fields = '__all__'
 
+class PesquisadorSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    class Meta:
+        model = Pesquisador
+        fields = '__all__'
 
 
 

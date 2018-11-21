@@ -1,7 +1,7 @@
-var Empreendimento = Vue.component("home-view", {
+var TipoIndicador = Vue.component("home-view", {
     data: function () {
         return {
-          empreendimento: []
+          tipoindicador: []
         }
       },
     template: /*html*/`
@@ -12,9 +12,9 @@ var Empreendimento = Vue.component("home-view", {
         <v-container fill-height>
             <v-layout align-center>
                 <v-flex xs12>
-                    <h3 class="display-3">Empreendimentos Cadastrados <router-link class="btn btn-primary" to="/novo-empreendimento"><i class="fa fa-plus fa-fw"></i></router-link></h3>
+                    <h3 class="display-3">TipoIndicadores Cadastrados <router-link class="btn btn-primary" to="/novo-tipoindicador"><i class="fa fa-plus fa-fw"></i></router-link></h3>
                
-                    <span class="subheading">Lista de empreendimentos cadastrados no projeto.</span>
+                    <span class="subheading">Lista de tipoindicadores cadastrados no projeto.</span>
                     <v-divider class="my-3"></v-divider>
                     <ul v-if="errors && errors.length">
                         <li v-for="error of errors">
@@ -34,11 +34,11 @@ var Empreendimento = Vue.component("home-view", {
                     <div class="title mb-3">Veja resultados!</div>
                     
                     <div id="example-1">
-                    <div class="panel panel-primary" v-for="(empreendimento, index) in empreendimento"> 
+                    <div class="panel panel-primary" v-for="(tipoindicador, index) in tipoindicador"> 
                         <div class="panel-heading">
-                            {{ empreendimento.nome }}
+                            {{ tipoindicador.nome }}
                             <a href="#" class="pull-right" @click="delete_empresa(empresa.url, index)"><i class="fa fa-close fa-fw"></i></a>
-                            <router-link class="pull-right"  :to="'/editar-empreendimento/'+ empreendimento.id"><i class="fa fa-edit fa-fw"></i></router-link>
+                            <router-link class="pull-right"  :to="'/editar-tipoindicador/'+ tipoindicador.id"><i class="fa fa-edit fa-fw"></i></router-link>
                             
                             
                             
@@ -70,19 +70,19 @@ var Empreendimento = Vue.component("home-view", {
     },
     created() {
     
-        this.get_empreendimento()
+        this.get_tipoindicador()
     
     
     },
     methods: {
-        get_empreendimento() {
-            axios.get(api_link + 'empreendimento/').then(response => {
-            this.empreendimento = response.data;
+        get_tipoindicador() {
+            axios.get(api_link + 'tipoindicador/').then(response => {
+            this.tipoindicador = response.data;
         })
         },
-        delete_empreendimento(url, id) {
+        delete_tipoindicador(url, id) {
             axios.delete(url).then(response => {
-            this.empreendimento.splice(id, 1)
+            this.tipoindicador.splice(id, 1)
         })
         }
 
