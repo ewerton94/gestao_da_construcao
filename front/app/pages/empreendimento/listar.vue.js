@@ -1,7 +1,7 @@
 var Empreendimentos = Vue.component("home-view", {
     data: function () {
         return {
-          empreendimento: []
+          empreendimentos: []
         }
       },
     template: /*html*/`
@@ -34,10 +34,10 @@ var Empreendimentos = Vue.component("home-view", {
                     <div class="title mb-3">Veja resultados!</div>
                     
                     <div id="example-1">
-                    <div class="panel panel-primary" v-for="(empreendimento, index) in empreendimento"> 
+                    <div class="panel panel-primary" v-for="(empreendimento, index) in empreendimentos"> 
                         <div class="panel-heading">
                             {{ empreendimento.nome }}
-                            <a href="#" class="pull-right" @click="delete_empresa(empresa.url, index)"><i class="fa fa-close fa-fw"></i></a>
+                            <a href="#" class="pull-right" @click="delete_empresa(empresa.id, index)"><i class="fa fa-close fa-fw"></i></a>
                             <router-link class="pull-right"  :to="'/editar-empreendimento/'+ empreendimento.id"><i class="fa fa-edit fa-fw"></i></router-link>
                             
                             
@@ -46,8 +46,8 @@ var Empreendimentos = Vue.component("home-view", {
                         </div>
                         <div class="panel-body">
                         <h3>Contato:</h3>    
-                        <p>Telefone: {{ empresa.telefone }}</p>
-                        <p>E-mail: {{ empresa.email }}</p>
+                        <p>Local: {{ empreendimento.nome }}</p>
+                        <p>Local: {{ empreendimento.empresa.nome }}</p>
                         </div>
                         <div class="panel-footer">
                             Panel Footer
@@ -77,12 +77,12 @@ var Empreendimentos = Vue.component("home-view", {
     methods: {
         get_empreendimento() {
             axios.get(api_link + 'empreendimento/').then(response => {
-            this.empreendimento = response.data;
+            this.empreendimentos = response.data;
         })
         },
         delete_empreendimento(url, id) {
             axios.delete(url).then(response => {
-            this.empreendimento.splice(id, 1)
+            this.empreendimentos.splice(id, 1)
         })
         }
 
