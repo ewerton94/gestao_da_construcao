@@ -45,13 +45,21 @@ class Cliente(models.Model):
         
     def is_tecnico(self):
         return self.funcao == 'tecnico'
+    
+    def __str__(self):
+        return self.email
 
 class Empreendimento(models.Model):
     nome = models.CharField(max_length=500)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name="empreendimentos")
 
+    def __str__(self):
+        return self.nome
+
 class Referencia(models.Model):
     texto = models.CharField(max_length=500)
+    def __str__(self):
+        return self.texto
 
 class TipoIndicador(models.Model):
     titulo = models.CharField(max_length=500)
@@ -68,7 +76,7 @@ class Indicador(models.Model):
     campo2 = models.CharField(max_length=500)
 
     def __str__(self):
-        return self.titulo + ' (' + self.unidade_de_medida + ')'
+        return self.titulo
 
 class Resultado(models.Model):
     empreendimento = models.ForeignKey(Empreendimento, on_delete=models.CASCADE)

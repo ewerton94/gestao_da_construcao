@@ -32,6 +32,7 @@
     
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    
     <script type="text/javascript" src="http://unpkg.com/vue-form-generator@2.0.0"></script>
     <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -45,6 +46,9 @@
 <script src="https://unpkg.com/chartist"></script>
 <script src="https://unpkg.com/vchart"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.39.1/plotly.js"></script>
+<script src="app/vue-plotly.js"></script>
+
 
 </head>
 
@@ -295,7 +299,7 @@
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="#/"><i class="fa fa-dashboard fa-fw"></i>Início</a>
+                            <a href="#/"><i class="fa fa-dashboard fa-fw"></i> Início</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i> Gerenciar<span class="fa arrow"></span></a>
@@ -304,17 +308,23 @@
                                     <a href="#/empresas">Empresas</a>
                                 </li>
                                 <li>
-                                    <a href="#/empresas">Empreeendimentos</a>
+                                    <a href="#/empreendimentos">Empreeendimentos</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
+                        <!--
                         <li>
                             <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
                         </li>
+                        -->
                         <li>
-                            <a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>
+                            <a href="#/resposta-indicadores"><i class="fa fa-edit fa-fw"></i> Responder indicadores</a>
                         </li>
+                        <li>
+                                <a href="#/resultados-indicadores"><i class="fa fa-bar-chart fa-fw"></i> Resultados</a>
+                            </li>
+                        <!--
                         <li>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i> UI Elements<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
@@ -336,9 +346,9 @@
                                 <li>
                                     <a href="grid.html">Grid</a>
                                 </li>
+
                             </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
+                                                   </li>
                         <li>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
@@ -364,10 +374,9 @@
                                             <a href="#">Third Level Item</a>
                                         </li>
                                     </ul>
-                                    <!-- /.nav-third-level -->
-                                </li>
+                                                                    </li>
                             </ul>
-                            <!-- /.nav-second-level -->
+                            
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
@@ -379,8 +388,9 @@
                                     <a href="login.html">Login Page</a>
                                 </li>
                             </ul>
-                            <!-- /.nav-second-level -->
+                            
                         </li>
+                        -->
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
@@ -411,6 +421,8 @@
     <script src="dist/js/sb-admin-2.js"></script>
     <script>const api_link = 'http://localhost:8000/'</script>
     <script src="app/home.vue.js" ></script>
+    <script src="app/pages/indicadores/resposta_indicadores.vue.js" ></script>
+    <script src="app/pages/visual/home.vue.js" ></script>
     <script src="app/pages/empresa/empresas.vue.js" ></script>
     <script src="app/pages/empresa/nova_empresa.vue.js" ></script>
     <script src="app/pages/empresa/editar_empresa.vue.js" ></script>

@@ -16,4 +16,8 @@ class EmpreendimentoForm(forms.ModelForm):
 
 
 # Ewerton Escreve aqui em baixo:
-
+from .models import Resultado 
+class ResultadoForm(forms.ModelForm):
+    class Meta:
+        model = Resultado
+        fields = ['empreendimento', 'referencia', 'conferido_por']

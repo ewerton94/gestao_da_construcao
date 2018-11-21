@@ -77,5 +77,92 @@ def criar_empreendimento(request):
 
 
 # Ewerton Escreve aqui em baixo:
+from .forms import ResultadoForm
+from .models import Indicador, Cliente, Referencia, Empreendimento, Resultado
+from .graphs import get_graph
+@api_view(['GET','POST'])
+def visualizar_resultados(request):
+    a = str(get_graph())
+    return Response({'grafico': a})
+
+
+@api_view(['GET','POST'])
+def form_indicadores(request):
+    if request.method == 'POST':
+        data = request.data
+        fixo = ['conferido_por', 'referencia', 'empreendimento']
+        cliente = Cliente.objects.get(id=data['conferido_por'])
+        referencia = Referencia.objects.get(id=data['referencia'])
+        empreendimento = Empreendimento.objects.get(id=data['empreendimento'])
+        indicadores = {}
+        for key, value in data.items():
+            if key[0].isdigit():
+                indicadores.setdefault(int(key[0]), {})[key[-1]] = value
+        for id, respostas in indicadores.items():
+            indicador = Indicador.objects.get(id=id)
+            r = {}
+            for i in range(1, 3):
+                r[i] = respostas.get(str(i), 0)
+                
+            Resultado.objects.create(
+                conferido_por=cliente,
+                referencia=referencia,
+                empreendimento=empreendimento,
+                indicador=indicador,
+                valor_campo_1=r[1],
+                valor_campo_2=r[2]
+            )
+
+        return Response('ok')
+            
+
+
+
+    if request.method == 'GET':
+        form = ResultadoForm()  
+        schema = get_schema(form)
+        indicadores = Indicador.objects.filter(tipo__modelo='mensal')
+        
+        schema['schema'] = {
+            'groups':[
+                {
+                    'legend': 'Dados de identificação da resposta',
+                    'fields': schema['schema']['fields']
+                }
+            ]
+        }
+        for indicador in indicadores:
+            op = [
+                {'label': indicador.campo1,'model': str(indicador.id)+'-valor_campo_1' },
+                {'label': indicador.campo2,'model': str(indicador.id)+'-valor_campo_2' }
+            ]
+            schema['schema']['groups'].append(
+                {
+                    'legend': indicador.titulo,
+                    'styleClasses':'row',
+                    'tag': 'div',
+                    'fields': [
+                        {
+                            
+                                'type': "input",
+                                'inputType': "number",
+                                'id': e['model'],
+                                'label': e['label'],
+                                'model': e['model'],
+                                'styleClasses':'col-md-6',
+                                'tag': 'div',
+                                
+                            
+
+                        } for e in op
+                    ]
+                }
+            )
+
+
+        return Response(schema)
+    else:
+        raise MethodNotAllowed
+
 
 

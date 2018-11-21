@@ -1,17 +1,17 @@
 from rest_framework import serializers
 from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Indicador, Resultado
 
-class ClienteSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.IntegerField()
+class ClienteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Cliente
         fields = '__all__'
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.IntegerField()
+class UserSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['email', 'password', 'username', 'is_staff']
 
 class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -28,25 +28,25 @@ class EmpreendimentoSerializer(serializers.ModelSerializer):
     
 
 class ReferenciaSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Referencia
         fields = '__all__'
 
 class TipoIndicadorSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = TipoIndicador
         fields = '__all__'
 
 class IndicadorSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Indicador
         fields = '__all__'
 
 class ResultadoSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Resultado
         fields = '__all__'

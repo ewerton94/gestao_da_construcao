@@ -15,6 +15,8 @@ const Bar = { template: '<div id="page-wrapper"><div>bar</div></div>' }
 const routes = [
   { path: '/', component: Home },
   { path: '/bar', component: Bar },
+  { path: '/resposta-indicadores', component: RespostaIndicadores },
+  { path: '/resultados-indicadores', component: ResultadoIndicadores },
   { path: '/empresas', component: Empresas },
   { path: '/nova-empresa', component: NovaEmpresa },
   { path: '/editar-empresa/:id', component: EditarEmpresa, name: 'editar-empresa'},
