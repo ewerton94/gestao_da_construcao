@@ -72,6 +72,10 @@ def criar_empreendimento(request):
 
 
 
+
+
+
+
 # Ewerton Escreve aqui em baixo:
 
 

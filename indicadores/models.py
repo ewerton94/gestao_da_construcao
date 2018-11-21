@@ -64,7 +64,8 @@ class Indicador(models.Model):
     tipo = models.ForeignKey(TipoIndicador, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=500)
     descricao = models.TextField()
-    unidade_de_medida = models.CharField(max_length=500)
+    campo1 = models.CharField(max_length=500)
+    campo2 = models.CharField(max_length=500)
 
     def __str__(self):
         return self.titulo + ' (' + self.unidade_de_medida + ')'
@@ -74,7 +75,8 @@ class Resultado(models.Model):
     referencia = models.ForeignKey(Referencia, on_delete=models.CASCADE)
     indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE)
     conferido_por = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    valor = models.FloatField()
+    valor_campo_1 = models.FloatField()
+    valor_campo_2 = models.FloatField()
 
 
 
