@@ -10,16 +10,16 @@ var ResultadoIndicadores = Vue.component("home-view", {
     template: /*html*/`
     <div id="page-wrapper">
 
-    
+
     <v-responsive color="grey lighten-2">
         <v-container fill-height>
             <v-layout align-center>
                 <v-flex xs12>
-                    <h3 class="display-3">Empresas Cadastradas <router-link class="btn btn-primary" to="/nova-empresa"><i class="fa fa-plus fa-fw"></i></router-link></h3>
-               
-                    <span class="subheading">Lista de empresas cadastradas no projeto.</span>
+                    <h3 class="display-3">Resultados gerais</h3>
+
+                    <span class="subheading">Resultados gerais de janero a abril.</span>
                     <v-divider class="my-3"></v-divider>
-                    <vue-plotly :data="data" :layout="layout" :options="options"/>
+                    <div ref="um"></div>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -30,41 +30,70 @@ var ResultadoIndicadores = Vue.component("home-view", {
     $_veeValidate: {
         validator: "new"
     },
-    created() {
-    
+    mounted() {
+
         this.get_resultados()
-    
-    
-    },
-    components:{
-        "vue-plotly": VuePlotly
+
+
     },
     methods: {
         get_resultados() {
             var data = [{
-                x: ['giraffes', 'orangutans', 'monkeys'],
-                y: [20, 14, 23], 
-                name: 'SF Zoo',
+                x: ['A', 'B', 'C'],
+                y: [20, 14, 23],
+                name: 'Janeiro',
                 type: 'bar',
                 marker: {color: '#19d3f3'}
-              }, {
-                x: ['giraffes', 'orangutans', 'monkeys'],
-                y: [12, 18, 29], 
-              name: 'LA Zoo', 
+              },
+              {
+                x: ['A', 'B', 'C'],
+                y: [12, 18, 29],
+              name: 'Fevereiro',
               type: 'bar',
-                marker: {color: '#ab63fa'} 
-              }];
-              
+                marker: {color: '#ab63fa'}
+              },
+              {
+                x: ['A', 'B', 'C'],
+                y: [22, 20, 25],
+              name: 'Março',
+              type: 'bar',
+                marker: {color: '#5463fa'}
+              },
+              {
+                x: ['A', 'B', 'C'],
+                y: [15, 25, 18],
+              name: 'Abril',
+              type: 'bar',
+                marker: {color: '#bac3fa'}
+              }
+            ];
+
               var layout = {
+                title: 'Reboco interno',
                 plot_bgcolor: '#F5F7FA',
                 paper_bgcolor: '#F5F7FA',
-                width: 500
+                width: 500,
+                xaxis: {
+               title: 'empresas',
+               titlefont: {
+                 family: 'Arial',
+                 size: 18,
+                 color: '#7f7f7f'
+               }
+             },
+             yaxis: {
+               title: 'HH/m²',
+               titlefont: {
+                 family: 'Arial',
+                 size: 18,
+                 color: '#7f7f7f'
+               }
+             }
               };
-              var graph = document.getElementById('myDiv');
-              Plotly.plot(graph, data, layout);
+
+              Plotly.plot(this.$refs.um, data, layout);
         }
 
 
 }
 });
-
