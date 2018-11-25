@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import random
-import string 
+import string
 
 def rand_slug(n):
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(n))
@@ -21,19 +21,16 @@ class Empresa(models.Model):
     email = models.CharField(max_length=500)
     cnpj = models.IntegerField()
     telefone = models.IntegerField()
-    codigo = models.SlugField(null=True, unique=True, blank=True)
 
     def __str__(self):
         return self.nome
 
-    def gerar_codigo(self):
-        self.condigo = 'EMP'+rand_slug(3)
 
 class Pesquisador(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     email = models.EmailField()
-    
+
 class Cliente(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cliente")
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name="clientes")
@@ -42,19 +39,25 @@ class Cliente(models.Model):
 
     def is_supervisor(self):
         return self.funcao == 'supervisor'
-        
+
     def is_tecnico(self):
         return self.funcao == 'tecnico'
-    
+
     def __str__(self):
         return self.email
 
 class Empreendimento(models.Model):
     nome = models.CharField(max_length=500)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name="empreendimentos")
+    codigo = models.CharField(max_length=10, null=True, unique=True, blank=True)
 
     def __str__(self):
         return self.nome
+
+    def gerar_codigo(self, n=3):
+        c = str(rand_slug(n))
+        self.codigo = c
+        self.save()
 
 class Referencia(models.Model):
     texto = models.CharField(max_length=500)
@@ -85,14 +88,3 @@ class Resultado(models.Model):
     conferido_por = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     valor_campo_1 = models.FloatField()
     valor_campo_2 = models.FloatField()
-
-
-
-    
-
-
-
-
-
-
-
