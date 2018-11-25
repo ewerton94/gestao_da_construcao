@@ -34,7 +34,7 @@ var Empresas = Vue.component("home-view", {
                         </v-alert>
                         </li>
                     </ul>
-                    <div class="title mb-3">Veja resultados!</div>
+
 
                     <div id="example-1">
                     <div class="panel panel-primary" v-for="(empresa, index) in empresas">
@@ -60,7 +60,7 @@ var Empresas = Vue.component("home-view", {
 
 
     </div>
-                    <v-btn large color="blue" class="mx-0">See more</v-btn>
+                    
                     </div>
                 </v-flex>
             </v-layout>
