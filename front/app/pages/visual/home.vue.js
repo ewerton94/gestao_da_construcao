@@ -72,7 +72,7 @@ var ResultadoIndicadores = Vue.component("home-view", {
                 title: 'Reboco interno',
                 plot_bgcolor: '#F5F7FA',
                 paper_bgcolor: '#F5F7FA',
-                width: 500,
+                width: "100%",
                 xaxis: {
                title: 'empresas',
                titlefont: {
