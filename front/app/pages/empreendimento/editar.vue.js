@@ -43,6 +43,7 @@ var EditarEmpreendimento = Vue.component("editar-empreendimento-view", {
                     <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
                     <v-btn large color="blue" class="mx-0" @click="send">Atualizar</v-btn>
                     </div>
+                    
                     </div>
                 </v-flex>
             </v-layout>
@@ -66,14 +67,14 @@ var EditarEmpreendimento = Vue.component("editar-empreendimento-view", {
     },
     methods: {
         get_form_empreendimentos(id) {
-            axios.get(api_link + 'form_empreendimentos/' + id).then(response => {
+            axios.get(api_link + 'editar_empreendimento/' + id).then(response => {
             this.schema = response.data.schema;
             this.model = response.data.model;
         })},
         send() {
             var id = this.$route.params.id;
             this.loading = true;
-            axios.post(api_link + 'form_empreendimentos/' + id, this.model)
+            axios.post(api_link + 'editar_empreendimento/' + id, this.model)
             .then(response => {
                 this.success.push('Empreendimento ' + response.data.nome + ' editada com sucesso!')
                 this.schema = {};

@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from indicadores.routers import router
-from indicadores.views import form_indicadores, visualizar_resultados
+from indicadores.views import form_indicadores, visualizar_resultados, criar_codigos
 from indicadores.views import form_empresas, form_editar_empresas, criar_empreendimento, editar_empreendimento, criar_cliente, editar_cliente, criar_user, editar_user, criar_referencia, editar_referencia, criar_indicador, editar_indicador, criar_tipoindicador, editar_tipoindicador, criar_resultado, editar_resultado, criar_pesquisador, editar_pesquisador
 
 urlpatterns = [
@@ -29,7 +29,7 @@ urlpatterns = [
     path('form_empresas/<int:id>', form_editar_empresas, name="form_editar_empresas"),
     path('criar_empreendimento/', criar_empreendimento, name="criar_empreendimento"),
     path('editar_empreendimento/<int:id>', editar_empreendimento, name="editar_empreendimento"),
-
+    path('criar_codigos/', criar_codigos, name="criar_codigos"),
     path('criar_cliente/', criar_cliente, name="criar_cliente"),
     path('editar_cliente/<int:id>', editar_cliente, name="editar_cliente"),
     path('criar_user/', criar_user, name="criar_user"),

@@ -1,4 +1,4 @@
-var Empreendimentos = Vue.component("home-view", {
+var Empreendimentos = Vue.component("listar-empreendimento-view", {
     data: function () {
         return {
           empreendimentos: [],
@@ -15,7 +15,7 @@ var Empreendimentos = Vue.component("home-view", {
             <v-layout align-center>
                 <v-flex >
                 <div class="col-md-10">
-                    <h3  class="display-3">Empreendimentos Cadastrados <router-link class="btn btn-primary" to="/novo-empreendimento"><i class="fa fa-plus fa-fw"></i></router-link></h3>
+                    <h3  class="display-3">Empreendimentos Cadastrados <router-link class="btn btn-primary" to="/novo-empreendimento"><i class="fa fa-plus fa-fw"></i></router-link> <a class="btn btn-primary" @click="gerar_codigos"><i class="fa fa-refresh fa-fw"></i></a></h3>
 
                     <span class="subheading">Lista de empreendimentos cadastrados no projeto.</span>
                     <v-divider class="my-3"></v-divider>
@@ -25,22 +25,20 @@ var Empreendimentos = Vue.component("home-view", {
                         </li>
                     </ul>
                     <ul v-if="success && success.length">
-                        <li v-for="message of success">
-                        <v-alert
-                        :value="true"
-                        type="success"
-                        >
-                        {{message}}.
-                        </v-alert>
-                        </li>
+                    <li style="list-style-type: none;" v-for="message of success">
+                    <div class="alert alert-success">
+                    {{message}}.
+                    </div>
+
+                    </li>
                     </ul>
 
 
-                    <div id="example-1" >
+                    <div v-if="empreendimentos && empreendimentos.length">
                     <div class="panel panel-primary p-0 m-0" v-for="(empreendimento, index) in empreendimentos">
                         <div class="panel-heading">
                             {{ empreendimento.nome }}
-                            <a href="#" class="pull-right" @click="delete_empresa(empresa.id, index)"><i class="fa fa-close fa-fw"></i></a>
+                            <a href="#" class="pull-right" @click="delete_empreendimento(empreendimento.id, index)"><i class="fa fa-close fa-fw"></i></a>
                             <router-link class="pull-right"  :to="'/editar-empreendimento/'+ empreendimento.id"><i class="fa fa-edit fa-fw"></i></router-link>
 
 
@@ -48,19 +46,25 @@ var Empreendimentos = Vue.component("home-view", {
 
                         </div>
                         <div class="panel-body">
-                        <h3>Contato:</h3>
-                        <p>Local: {{ empreendimento.nome }}</p>
+                        <h3>Dados:</h3>
+                        <p>Empresa: {{ empreendimento.empresa }}</p>
                         <p>Local: {{ empreendimento.empresa.nome }}</p>
                         </div>
                         <div class="panel-footer">
-                            Panel Footer
+                            {{ empreendimento.codigo }}
                         </div>
                     </div>
 
 
 
-    </div>
-                    <v-btn large color="blue" class="mx-0">See more</v-btn>
+                    </div>
+
+                    <div v-else>
+                    <div class="alert alert-danger">
+                    Sem empreendimentos.
+                    </div>
+                    </div>
+
                     </div>
 
                 </v-flex>
@@ -85,9 +89,16 @@ var Empreendimentos = Vue.component("home-view", {
             this.empreendimentos = response.data;
         })
         },
-        delete_empreendimento(url, id) {
-            axios.delete(url).then(response => {
-            this.empreendimentos.splice(id, 1)
+        gerar_codigos() {
+          console.log('Tentando gerar_codigos')
+            axios.post(api_link + 'criar_codigos/', {gerar: 'ok'}).then(response => {
+            this.success.push(response.data.message);
+            this.get_empreendimento()
+        })
+        },
+        delete_empreendimento(id, idx) {
+            axios.delete(api_link + 'empreendimentos/' + id).then(response => {
+            this.empreendimentos.splice(idx, 1)
         })
         }
 

@@ -157,7 +157,19 @@ from .graphs import get_graph
 def visualizar_resultados(request):
     a = str(get_graph())
     return Response({'grafico': a})
-
+@api_view(['POST'])
+def criar_codigos(request):
+    data = request.data
+    if data['gerar'] == 'ok':
+        print('entrou certo')
+        for emp in Empreendimento.objects.all():
+            try:
+                emp.gerar_codigo()
+                print(emp)
+            except:
+                emp.gerar_codigo(2)
+        return Response({'message': "Códigos gerados com sucesso"})
+    return Response({'message': "Variável gerar não definida!"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET','POST'])
 def form_indicadores(request):
@@ -176,7 +188,7 @@ def form_indicadores(request):
             r = {}
             for i in range(1, 3):
                 r[i] = respostas.get(str(i), 0)
-                
+
             Resultado.objects.create(
                 conferido_por=cliente,
                 referencia=referencia,
@@ -187,15 +199,15 @@ def form_indicadores(request):
             )
 
         return Response('ok')
-            
+
 
 
 
     if request.method == 'GET':
-        form = ResultadoForm()  
+        form = ResultadoForm()
         schema = get_schema(form)
         indicadores = Indicador.objects.filter(tipo__modelo='mensal')
-        
+
         schema['schema'] = {
             'groups':[
                 {
@@ -216,7 +228,7 @@ def form_indicadores(request):
                     'tag': 'div',
                     'fields': [
                         {
-                            
+
                                 'type': "input",
                                 'inputType': "number",
                                 'id': e['model'],
@@ -224,8 +236,8 @@ def form_indicadores(request):
                                 'model': e['model'],
                                 'styleClasses':'col-md-6',
                                 'tag': 'div',
-                                
-                            
+
+
 
                         } for e in op
                     ]
@@ -236,6 +248,3 @@ def form_indicadores(request):
         return Response(schema)
     else:
         raise MethodNotAllowed
-
-
-

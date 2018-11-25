@@ -7,49 +7,49 @@ class EmpresaForm(forms.ModelForm):
         fields = ['nome', 'email', 'cnpj', 'telefone']
 
 class EmpreendimentoForm(forms.ModelForm):
-    
+
     class Meta:
         model = Empreendimento
-        fields = '__all__'
+        fields = ['nome', 'empresa']
 
 class ClienteForm(forms.ModelForm):
-    
+
     class Meta:
         model = Cliente
         fields = '__all__'
 
 class UserForm(forms.ModelForm):
-    
+
     class Meta:
         model = User
         fields = '__all__'
 
 class ReferenciaForm(forms.ModelForm):
-    
+
     class Meta:
         model = Referencia
         fields = '__all__'
 
 class IndicadorForm(forms.ModelForm):
-    
+
     class Meta:
         model = Indicador
         fields = '__all__'
 
 class TipoIndicadorForm(forms.ModelForm):
-    
+
     class Meta:
         model = TipoIndicador
         fields = '__all__'
 
 class ResultadoForm(forms.ModelForm):
-    
+
     class Meta:
         model = Resultado
         fields = '__all__'
 
 class PesquisadorForm(forms.ModelForm):
-    
+
     class Meta:
         model = Resultado
         fields = '__all__'
@@ -57,7 +57,7 @@ class PesquisadorForm(forms.ModelForm):
 
 
 # Ewerton Escreve aqui em baixo:
-from .models import Resultado 
+from .models import Resultado
 class ResultadoForm(forms.ModelForm):
     class Meta:
         model = Resultado
