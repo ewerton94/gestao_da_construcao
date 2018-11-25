@@ -2,26 +2,27 @@ var NovaEmpresa = Vue.component("nova-empresa-view", {
     data: function () {
         return {
             model: {},
-            schema: {},           
+            schema: {},
             formOptions: {
                 validateAfterLoad: false,
                 validateAfterChanged: false
             },
             errors: [],
             success: []
-            
+
         }
       },
     template: /*html*/`
     <div id="page-wrapper">
 
-    
+
     <v-responsive color="grey lighten-2">
         <v-container fill-height>
             <v-layout align-center>
-                <v-flex xs12>
+            <v-flex class="col-md-12">
+            <div class="col-md-10">
                     <h3 class="display-3">Nova empresa</h3>
-               
+
                     <span class="subheading">Cadastro de nova empresa</span>
                     <v-divider class="my-3"></v-divider>
                     <ul v-if="errors && errors.length">
@@ -30,18 +31,18 @@ var NovaEmpresa = Vue.component("nova-empresa-view", {
                         </li>
                     </ul>
                     <ul v-if="success && success.length">
-                        
+
                         <li style="list-style-type: none;" v-for="message of success">
                         <div class="alert alert-success">
                         {{message}}. <a href="#/empresas" class="alert-link">Ver lista de empresas</a>.
                         </div>
-                        
+
                         </li>
                     </ul>
                     <div v-if="schema.fields && schema.fields.length">
                     <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
                     <v-btn large color="blue" class="mx-0" @click="send">Criar</v-btn>
-                    </div>
+                    </div></div>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -56,10 +57,10 @@ var NovaEmpresa = Vue.component("nova-empresa-view", {
         "vue-form-generator": VueFormGenerator.component
     },
     created() {
-    
+
         this.get_form_empresas()
-    
-    
+
+
     },
     methods: {
         get_form_empresas() {
@@ -78,18 +79,10 @@ var NovaEmpresa = Vue.component("nova-empresa-view", {
                 this.success.push('Empresa ' + response.data.nome + ' criada com sucesso!')
                 this.schema = {};
                 this.model = {};
-                
+
             })
             .catch(e => {
               this.errors.push(e)
             })
     }}
 });
-
-
-
-
-
-
-
-
