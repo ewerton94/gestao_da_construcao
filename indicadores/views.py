@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
@@ -41,7 +42,38 @@ def generic_update_view(request, Model, Serializer, Form, id):
         schema = get_schema(form)
         return Response(schema)
     else:
-        raise MethodNotAllowed
+        raise MethodNotAllowed()
+
+@api_view(['GET'])
+def obtem_usuario_logado(request):
+    if request.method == 'GET':
+        user = request.user
+        if user.is_authenticated:
+            cliente = Cliente.objects.filter(user=user).first()
+            pesquisador = Pesquisador.objects.filter(user=user).first()
+            nome = ''
+            if cliente:
+                cliente = cliente.id
+                nome = cliente.nome
+            else:
+                cliente = None
+            if pesquisador:
+                pesquisador = pesquisador.id
+                nome = pesquisador.nome
+            else:
+                pesquisador = None
+            return Response({'user': {'id': user.id, 'nome': nome, 'username': user.username}, 'cliente': cliente, 'pesquisador': pesquisador})
+        raise UsuarioNaoEncontrado()
+    raise MethodNotAllowed()
+
+@api_view(['GET'])
+def obtem_usuario_deslogado(request):
+    if request.method == 'GET':
+        user = request.user
+        if user.is_authenticated:
+            raise UsuarioEncontrado()
+        else:
+            return Response('ok')
 
 #EMPRESAS
 

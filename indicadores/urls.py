@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .routers import router
-from indicadores.views import form_indicadores, visualizar_resultados, criar_codigos
+from indicadores.views import form_indicadores, visualizar_resultados, criar_codigos, obtem_usuario_logado, obtem_usuario_deslogado
 from indicadores.views import form_empresas, form_editar_empresas, criar_empreendimento, editar_empreendimento, criar_cliente, editar_cliente, criar_user, editar_user, criar_referencia, editar_referencia, criar_indicador, editar_indicador, criar_tipoindicador, editar_tipoindicador, criar_resultado, editar_resultado, criar_pesquisador, editar_pesquisador
 
 urlpatterns = [
@@ -42,6 +42,8 @@ urlpatterns = [
     path('editar_resultado/<int:id>', editar_resultado, name="editar_resultado"),
     path('criar_pesquisador/', criar_pesquisador, name="criar_pesquisador"),
     path('editar_pesquisador/<int:id>', editar_pesquisador, name="editar_pesquisador"),
+    path('obtem_usuario_logado/', obtem_usuario_logado, name='obtem_usuario_logado'),
+    path('obtem_usuario_deslogado/', obtem_usuario_deslogado, name='obtem_usuario_deslogado'),
 
 ]
 
