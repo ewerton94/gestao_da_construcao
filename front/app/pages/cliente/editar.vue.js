@@ -2,26 +2,26 @@ var EditarCliente = Vue.component("editar-cliente-view", {
     data: function () {
         return {
             model: {},
-            schema: {},           
+            schema: {},
             formOptions: {
                 validateAfterLoad: false,
                 validateAfterChanged: false
             },
             errors: [],
             success: []
-            
+
         }
       },
     template: /*html*/`
     <div id="page-wrapper">
 
-    
+
     <v-responsive color="grey lighten-2">
         <v-container fill-height>
             <v-layout align-center>
                 <v-flex xs12>
                     <h3 class="display-3">Editar Cliente</h3>
-               
+
                     <span class="subheading">Edição dos dados da Cliente</span>
                     <v-divider class="my-3"></v-divider>
                     <ul v-if="errors && errors.length">
@@ -30,26 +30,26 @@ var EditarCliente = Vue.component("editar-cliente-view", {
                         </li>
                     </ul>
                     <ul v-if="success && success.length">
-                        
+
                         <li style="list-style-type: none;" v-for="message of success">
                         <div class="alert alert-success">
                         {{message}}. <a href="#/clientes" class="alert-link">Ver lista de clientes</a>.
                         </div>
-                        
+
                         </li>
                     </ul>
                     <div v-if="schema.fields && schema.fields.length">
                     <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
                     <v-btn large color="blue" class="mx-0" @click="send">Atualizar</v-btn>
                     </div>
-                    
+
                 </v-flex>
             </v-layout>
         </v-container>
     </v-responsive>
     </div>
   `,
-    props: ["title"],
+    props: ["title", 'user'],
     $_veeValidate: {
         validator: "new"
     },
@@ -60,8 +60,8 @@ var EditarCliente = Vue.component("editar-cliente-view", {
 
 
         this.get_form_clientes(this.$route.params.id)
-    
-    
+
+
     },
     methods: {
         get_form_clientes(id) {
@@ -77,18 +77,10 @@ var EditarCliente = Vue.component("editar-cliente-view", {
                 this.success.push('Cliente ' + response.data.nome + ' editada com sucesso!')
                 this.schema = {};
                 this.model = {};
-                
+
             })
             .catch(e => {
               this.errors.push(e)
             })
     }}
 });
-
-
-
-
-
-
-
-

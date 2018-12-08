@@ -21,16 +21,33 @@
 
 
     <!-- Morris Charts CSS -->
-    <link href="vendor/morrisjs/morris.css" rel="stylesheet">
+
 
     <!-- Custom Fonts -->
-    <link rel="stylesheet" href="https://unpkg.com/chartist/dist/chartist.css">
-    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">
+
+
 
 
     <link rel="stylesheet" type="text/css" href="http://unpkg.com/vue-form-generator@2.0.0/dist/vfg.css">
-<link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+
+
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+
+
+
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+<link href="vendor/morrisjs/morris.css" rel="stylesheet">
+
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex@2.0.0"></script>
+
 
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 
@@ -43,21 +60,26 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.39.1/plotly.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css" rel="stylesheet">
+
 <script src="https://unpkg.com/chartist"></script>
 <script src="https://unpkg.com/vchart"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.39.1/plotly.js"></script>
 <script src="app/vue-plotly.js"></script>
-<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
-<link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-<link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
 <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
 
+<link href="dist/css/sb-admin-2.css" rel="stylesheet">
 </head>
 
-<body>
+<body >
+
+  <div id="app">
+
+
+  <template v-if="pronto && user && user.username.length" class="paginabranco">
+
+
 
     <div id="wrapper">
 
@@ -279,7 +301,7 @@
                         <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
                         <li class="divider"></li>
-                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href="#" @click="logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -413,10 +435,59 @@
             </div>
             <!-- /.navbar-static-side -->
         </nav>
-
         <router-view ></router-view>
         <!-- /#page-wrapper -->
+</div>
+    </template>
 
+    <template v-else-if="pronto" class="">
+
+
+      <div class="container">
+          <div class="row">
+              <div class="col-md-4 col-md-offset-4">
+                  <div class="login-panel panel panel-default">
+                      <div class="panel-heading">
+                          <h3 class="panel-title">Por favor, insira seus dados do sistema</h3>
+                      </div>
+                      <div class="panel-body">
+                          <form role="form">
+                            <ul v-if="errors && errors.length">
+                                <li v-for="error of errors">
+                                <div class="alert alert-danger">{{error.message}}</div>
+                                </li>
+                            </ul>
+                              <fieldset>
+                                  <div class="form-group">
+                                      <input v-model="model.username" class="form-control" placeholder="E-mail" name="email" type="email" autofocus>
+                                  </div>
+                                  <div  class="form-group">
+                                      <input v-on:keyup.enter="login" v-model="model.password" class="form-control" placeholder="Password" name="password" type="password" value="">
+                                  </div>
+                                  <div class="checkbox">
+                                      <!--<label>
+                                          <input name="remember" type="checkbox" value="Remember Me">Remember Me
+                                      </label>-->
+                                  </div>
+
+                                  <!-- Change this to a button or input when using this as a form -->
+                                  <a @click="login"  class="btn btn-lg btn-success btn-block">Login</a>
+                              </fieldset>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+
+
+
+
+
+
+
+    </template>
     </div>
     <!-- /#wrapper -->
     <!-- jQuery -->
@@ -435,7 +506,22 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="dist/js/sb-admin-2.js"></script>
-    <script>const api_link = 'http://localhost:8000/'</script>
+    <script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    const state = {
+  token: localStorage.getItem('user-token') || '',
+  status: '',
+};
+if (state.token) {
+  axios.defaults.headers.common['Authorization'] = 'Token ' + state.token;
+  console.log('Token ' + state.token)
+}
+
+    const api_link = 'http://localhost:8000/';
+
+
+  </script>
     <script src="app/home.vue.js" ></script>
     <script src="app/pages/indicadores/resposta_indicadores.vue.js" ></script>
     <script src="app/pages/visual/home.vue.js" ></script>

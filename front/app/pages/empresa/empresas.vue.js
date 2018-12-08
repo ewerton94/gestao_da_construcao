@@ -3,7 +3,7 @@ var Empresas = Vue.component("home-view", {
         return {
           empresas: [],
           success: [],
-          errors: []
+          errors: [],
         }
       },
     template: /*html*/`
@@ -15,6 +15,7 @@ var Empresas = Vue.component("home-view", {
             <v-layout align-center>
                 <v-flex class="col-md-12">
                 <div class="col-md-10">
+                {{ user }}
                     <h3 class="display-3">Empresas Cadastradas <router-link class="btn btn-primary" to="/nova-empresa"><i class="fa fa-plus fa-fw"></i></router-link></h3>
 
                     <span class="subheading">Lista de empresas cadastradas no projeto.</span>
@@ -60,7 +61,7 @@ var Empresas = Vue.component("home-view", {
 
 
     </div>
-                    
+
                     </div>
                 </v-flex>
             </v-layout>
@@ -68,13 +69,14 @@ var Empresas = Vue.component("home-view", {
     </v-responsive>
     </div>
   `,
-    props: ["title"],
+    props: [],
     $_veeValidate: {
         validator: "new"
     },
     created() {
 
-        this.get_empresas()
+        this.get_empresas();
+
 
 
     },
@@ -82,6 +84,7 @@ var Empresas = Vue.component("home-view", {
         get_empresas() {
             axios.get('http://localhost:8000/empresas/').then(response => {
             this.empresas = response.data;
+            console.log(this.user)
         })
         },
         delete_empresa(url, id) {

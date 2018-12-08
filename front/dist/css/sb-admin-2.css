@@ -3,14 +3,18 @@
  * Copyright 2013-2016 Start Bootstrap
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
-body {
+html, body {
   background-color: darkslategrey;
+  height: 100%;
 }
 a {
   color: white;
 }
 .navbar-default{
   background-color: darkslategrey;
+}
+.paginabranco{
+  background-color: white;
 }
 .navbar-default .navbar-brand {
   color: white;

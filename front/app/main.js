@@ -5,6 +5,7 @@
 // These can be imported from other files
 
 Vue.use(VueRouter);
+
 const Bar = { template: '<div id="page-wrapper"><div>bar</div></div>' }
 
 // 2. Define some routes
@@ -17,7 +18,7 @@ const routes = [
   { path: '/bar', component: Bar },
   { path: '/resposta-indicadores', component: RespostaIndicadores },
   { path: '/resultados-indicadores', component: ResultadoIndicadores },
-  { path: '/empresas', component: Empresas },
+  { path: '/empresas', component: Empresas, name:'empresas' },
   { path: '/nova-empresa', component: NovaEmpresa },
   { path: '/editar-empresa/:id', component: EditarEmpresa, name: 'editar-empresa'},
   { path: '/empreendimentos', component: Empreendimentos },
@@ -59,11 +60,124 @@ const router = new VueRouter({
 // Make sure to inject the router with the router option to make the
 // whole app router-aware.
 
+
+
+
+store = new Vuex.Store({
+  state: {
+    authUser: {},
+    isAuthenticated: false,
+    jwt: localStorage.getItem('token'),
+    endpoints: {
+      // TODO: Remove hardcoding of dev endpoints
+      obtainJWT: api_link+'obtain_token/',
+      refreshJWT: api_link + 'refresh_token/',
+      baseUrl: api_link
+    }
+  },
+
+  mutations: {
+    setAuthUser(state, {
+      authUser,
+      isAuthenticated
+    }) {
+      Vue.set(state, 'authUser', authUser)
+      Vue.set(state, 'isAuthenticated', isAuthenticated)
+    },
+    updateToken(state, newToken) {
+      // TODO: For security purposes, take localStorage out of the project.
+      localStorage.setItem('token', newToken);
+      state.jwt = newToken;
+    },
+    removeToken(state) {
+      // TODO: For security purposes, take localStorage out of the project.
+      localStorage.removeItem('token');
+      state.jwt = null;
+    }
+  }
+})
+
+
+
+
+
+
+
+
+
 const app = new Vue({
   router,
+  store,
+  data:{
+    errors: [],
+    model:{},
+    success: [],
+    user: {'username': ''},
+    pronto: false
+  },
+  created(){
+    console.log(this.user.username);
+    this.get_usuario_logado();
+
+  },
   components: {
     "vue-form-generator": VueFormGenerator.component
   },
-}).$mount('#wrapper')
+  methods: {
+    get_usuario_logado(){
+
+        axios.defaults.withCredentials = true;
+
+          axios.get(api_link + 'obtem_usuario_logado/', ).then(response => {
+          this.user = response.data.user;
+          this.pronto = true;
+
+          console.log('ai')
+      }).catch(e => {
+
+        console.log(e)
+        this.pronto = true;
+      })
+
+    },
+    login(){
+      console.log('login')
+      axios.post(api_link + 'entrar/', this.model)
+      .then(response => {
+          this.success.push('Cliente ' + response.data.nome + ' editada com sucesso!')
+          console.log(response.data)
+          localStorage.setItem('user-token', response.data.token);
+          window.location.reload();
+
+      })
+      .catch(e => {
+        console.log()
+        this.errors.push(e)
+        localStorage.removeItem('user-token');
+      })
+
+    },
+    logout(){
+      axios.get(api_link + 'sair/')
+      .then(response => {
+          console.log(response.data)
+          localStorage.removeItem('user-token');
+          window.location.reload();
+
+
+      })
+      .catch(e => {
+        console.log()
+        this.errors.push(e)
+        localStorage.removeItem('user-token');
+        window.location.reload();
+      })
+
+
+
+
+    }
+  }
+}).$mount('#app')
 
 // Now the app has started!

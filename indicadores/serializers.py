@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     class Meta:
         model = User
-        fields = ['email', 'password', 'username', 'is_staff']
+        fields = ['id', 'email', 'password', 'username', 'is_staff', 'is_authenticated']
 
 class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -24,8 +24,8 @@ class EmpreendimentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Empreendimento
         fields = '__all__'
-    
-    
+
+
 
 class ReferenciaSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)

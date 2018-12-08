@@ -16,11 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .routers import router
-from indicadores.views import form_indicadores, visualizar_resultados, criar_codigos, obtem_usuario_logado, obtem_usuario_deslogado
+from indicadores.views import form_indicadores, visualizar_resultados, criar_codigos, obtem_usuario_logado, obtem_usuario_deslogado, login
 from indicadores.views import form_empresas, form_editar_empresas, criar_empreendimento, editar_empreendimento, criar_cliente, editar_cliente, criar_user, editar_user, criar_referencia, editar_referencia, criar_indicador, editar_indicador, criar_tipoindicador, editar_tipoindicador, criar_resultado, editar_resultado, criar_pesquisador, editar_pesquisador
+from django.contrib.auth.views import logout_then_login
+from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
-
+    path('sair/', logout_then_login, {'login_url':'#/login/'}, name='logout'),
+    path('entrar/', login, name='login'),
+    path('obtain_token/', obtain_jwt_token),
     path('form_indicadores/', form_indicadores, name="form_indicadores"),
     path('visualizar_resultados/', visualizar_resultados, name="visualizar_resultados"),
     path('form_empresas/', form_empresas, name="form_empresas"),

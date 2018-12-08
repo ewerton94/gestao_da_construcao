@@ -3,12 +3,15 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
+from django.contrib.auth import authenticate, login as auth_login
 
 from .forms import ClienteForm, UserForm, EmpresaForm, EmpreendimentoForm, ReferenciaForm, TipoIndicadorForm, PesquisadorForm, IndicadorForm, ResultadoForm
 from .schemas import get_schema
 from .exceptions import *
 from .serializers import ClienteSerializer, UserSerializer, EmpresaSerializer, EmpreendimentoSerializer, ReferenciaSerializer, TipoIndicadorSerializer, IndicadorSerializer, ResultadoSerializer, PesquisadorSerializer
 from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Pesquisador, Indicador, Resultado
+
+
 
 def generic_create_view(request, Model, Serializer, Form):
     if request.method == 'POST':
@@ -44,10 +47,22 @@ def generic_update_view(request, Model, Serializer, Form, id):
     else:
         raise MethodNotAllowed()
 
+
+
+from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
+
+@csrf_exempt
 @api_view(['GET'])
 def obtem_usuario_logado(request):
     if request.method == 'GET':
         user = request.user
+        print(request.auth)
+        print(user)
         if user.is_authenticated:
             cliente = Cliente.objects.filter(user=user).first()
             pesquisador = Pesquisador.objects.filter(user=user).first()
@@ -74,7 +89,41 @@ def obtem_usuario_deslogado(request):
             raise UsuarioEncontrado()
         else:
             return Response('ok')
-
+'''
+@api_view(['POST'])
+def login(request):
+    username = request.data['username']
+    password = request.data['password']
+    print(username)
+    try:
+        usuario=User.objects.get(username=username)
+    except:
+        raise EmailInexistente()
+    new_user = authenticate(username=username, password=password)
+    if new_user is not None:
+        auth_login(request, new_user)
+        print(new_user)
+        return Response("OK")
+    else:
+        raise SenhaInvalida()
+'''
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def login(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+    if username is None or password is None:
+        return Response({'error': 'Please provide both username and password'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    user = authenticate(username=username, password=password)
+    if not user:
+        return Response({'error': 'Invalid Credentials'},
+                        status=status.HTTP_404_NOT_FOUND)
+    token, _ = Token.objects.get_or_create(user=user)
+    print(token)
+    return Response({'token': token.key},
+status=status.HTTP_200_OK)
 #EMPRESAS
 
 @api_view(['GET','POST'])
