@@ -233,11 +233,7 @@ def editar_pesquisador(request, id):
 # Ewerton Escreve aqui em baixo:
 from .forms import ResultadoForm
 from .models import Indicador, Cliente, Referencia, Empreendimento, Resultado
-from .graphs import get_graph
-@api_view(['GET','POST'])
-def visualizar_resultados(request):
-    a = str(get_graph())
-    return Response({'grafico': a})
+
 @api_view(['POST'])
 def criar_codigos(request):
     data = request.data

@@ -26,7 +26,6 @@ urlpatterns = [
     path('entrar/', login, name='login'),
     path('obtain_token/', obtain_jwt_token),
     path('form_indicadores/', form_indicadores, name="form_indicadores"),
-    path('visualizar_resultados/', visualizar_resultados, name="visualizar_resultados"),
     path('form_empresas/', form_empresas, name="form_empresas"),
     path('form_empresas/<int:id>', form_editar_empresas, name="form_editar_empresas"),
     path('criar_empreendimento/', criar_empreendimento, name="criar_empreendimento"),
