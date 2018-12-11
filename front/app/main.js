@@ -14,7 +14,7 @@ const Bar = { template: '<div id="page-wrapper"><div>bar</div></div>' }
 // `Vue.extend()`, or just a component options object.
 // We'll talk about nested routes later.
 const routes = [
-  { path: '/', component: Home },
+  { path: '/', component: Home , props: true},
   { path: '/bar', component: Bar },
   { path: '/resposta-indicadores', component: RespostaIndicadores },
   { path: '/resultados-indicadores', component: ResultadoIndicadores },
@@ -113,6 +113,8 @@ const app = new Vue({
     model:{},
     success: [],
     user: {'username': ''},
+    cliente: {},
+    pesquisador: {},
     pronto: false
   },
   created(){
@@ -131,9 +133,15 @@ const app = new Vue({
           axios.get(api_link + 'obtem_usuario_logado/', ).then(response => {
           this.user = response.data.user;
           this.pronto = true;
+          console.log(response.data.pesquisador)
+          localStorage.setItem('user-pesquisador', response.data.pesquisador || '');
+this.cliente = response.data.cliente || '';
+this.pesquisador = response.data.pesquisador || '';
+          localStorage.setItem('user-cliente', response.data.cliente || '');
 
-          console.log('ai')
       }).catch(e => {
+          localStorage.removeItem('user-pesquisador');
+          localStorage.removeItem('user-cliente');
 
         console.log(e)
         this.pronto = true;

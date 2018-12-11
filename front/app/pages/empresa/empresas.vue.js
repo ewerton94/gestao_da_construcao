@@ -82,7 +82,7 @@ var Empresas = Vue.component("home-view", {
     },
     methods: {
         get_empresas() {
-            axios.get('http://localhost:8000/empresas/').then(response => {
+            axios.get(api_link + '/empresas/').then(response => {
             this.empresas = response.data;
             console.log(this.user)
         })
