@@ -25,7 +25,7 @@ SECRET_KEY = 'i_g9@=xk()@1f32ur=#mh=efu9d8=1x+i=dmh*o-9@fc$_2&(w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['indicadoresufal.pythonanywhere.com']
 
 
 # Application definition
@@ -159,3 +159,7 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': timedelta(hours=1),
     'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
 }
+
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
