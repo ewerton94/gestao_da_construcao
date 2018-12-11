@@ -68,13 +68,13 @@ def obtem_usuario_logado(request):
             pesquisador = Pesquisador.objects.filter(user=user).first()
             nome = ''
             if cliente:
-                cliente = cliente.id
                 nome = cliente.nome
+                cliente = cliente.id
             else:
                 cliente = None
             if pesquisador:
-                pesquisador = pesquisador.id
                 nome = pesquisador.nome
+                pesquisador = pesquisador.id
             else:
                 pesquisador = None
             return Response({'user': {'id': user.id, 'nome': nome, 'username': user.username}, 'cliente': cliente, 'pesquisador': pesquisador})
