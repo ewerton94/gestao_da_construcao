@@ -134,10 +134,10 @@ const app = new Vue({
           this.user = response.data.user;
           this.pronto = true;
           console.log(response.data.pesquisador)
-          localStorage.setItem('user-pesquisador', response.data.pesquisador || '');
-this.cliente = response.data.cliente || '';
-this.pesquisador = response.data.pesquisador || '';
-          localStorage.setItem('user-cliente', response.data.cliente || '');
+          localStorage.setItem('user-pesquisador', response.data.pesquisador || 0);
+this.cliente = response.data.cliente || 0;
+this.pesquisador = response.data.pesquisador || 0;
+          localStorage.setItem('user-cliente', response.data.cliente || 0);
 
       }).catch(e => {
           localStorage.removeItem('user-pesquisador');
