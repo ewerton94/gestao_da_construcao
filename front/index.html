@@ -327,8 +327,8 @@
                         <li>
                             <a href="#/"><i class="fa fa-dashboard fa-fw"></i> Início</a>
                         </li>
-                        <div v-if="pesquisador.length" class="">
-                        <li>
+
+                        <li v-if="pesquisador > 0">
                             <a href="#"><i class="fa fa-wrench fa-fw"></i> Gerenciar<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
 
@@ -358,13 +358,13 @@
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
-                      </div>
+            
                         <!--
                         <li>
                             <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
                         </li>
                         -->
-                        <div v-if="cliente.length" class="">
+                        <div v-if="cliente > 0" class="">
                         <li>
                             <a href="#/resposta-indicadores"><i class="fa fa-edit fa-fw"></i> Responder indicadores</a>
                         </li>
