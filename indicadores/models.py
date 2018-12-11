@@ -30,11 +30,13 @@ class Pesquisador(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     email = models.EmailField()
+    nome = models.CharField(max_length=500)
 
 class Cliente(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cliente")
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name="clientes")
     email = models.EmailField()
+    nome = models.CharField(max_length=500)
     funcao = models.CharField(max_length=500, choices=FUNCAO_TUPLE)
 
     def is_supervisor(self):
