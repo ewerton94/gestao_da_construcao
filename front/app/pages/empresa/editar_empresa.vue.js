@@ -13,14 +13,10 @@ var EditarEmpresa = Vue.component("editar-empresa-view", {
         }
       },
     template: /*html*/`
-    <div id="page-wrapper">
 
-
-    <v-responsive color="grey lighten-2">
-        <v-container fill-height>
             <v-layout align-center>
-            <v-flex class="col-md-12">
-            <div class="col-md-10">
+            <v-flex >
+
                     <h3 class="display-3">Editar Empresa</h3>
 
                     <span class="subheading">Edição dos dados da Empresa</span>
@@ -40,15 +36,13 @@ var EditarEmpresa = Vue.component("editar-empresa-view", {
                         </li>
                     </ul>
                     <div v-if="schema.fields && schema.fields.length">
-                    <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
+                    <vue-form-generator :schema="schema" :model="model" :options="formOptions" ></vue-form-generator>
                     <v-btn large color="blue" class="mx-0" @click="send">Atualizar</v-btn>
                     </div>
-                      </div>
+
                 </v-flex>
             </v-layout>
-        </v-container>
-    </v-responsive>
-    </div>
+
   `,
     props: ["title"],
     $_veeValidate: {

@@ -113,9 +113,12 @@ const app = new Vue({
     model:{},
     success: [],
     user: {'username': ''},
+    source: 'hahaha.com',
+    drawer: null,
     cliente: {},
     pesquisador: {},
-    pronto: false
+    pronto: false,
+    show: false
   },
   created(){
     console.log(this.user.username);

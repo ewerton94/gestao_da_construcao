@@ -7,16 +7,27 @@ var Empresas = Vue.component("home-view", {
         }
       },
     template: /*html*/`
-    <div id="page-wrapper">
+            <v-layout align-left>
+            <v-flex align-left>
 
 
-    <v-responsive color="grey lighten-2">
-        <v-container fill-height>
-            <v-layout align-center>
-                <v-flex class="col-md-12">
-                <div class="col-md-10">
-                {{ user }}
-                    <h3 class="display-3">Empresas Cadastradas <router-link class="btn btn-primary" to="/nova-empresa"><i class="fa fa-plus fa-fw"></i></router-link></h3>
+                    <h3 class="display-3">Empresas Cadastradas
+
+                    <v-tooltip float-right>
+                      <v-btn
+                        slot="activator"
+                        href="#/nova-empresa"
+                        icon
+                        large
+
+                      >
+                        <v-icon large>add_box</v-icon>
+                      </v-btn>
+                      <span>Adicionar empresa</span>
+                    </v-tooltip>
+
+                    </h3>
+
 
                     <span class="subheading">Lista de empresas cadastradas no projeto.</span>
                     <v-divider class="my-3"></v-divider>
@@ -36,38 +47,59 @@ var Empresas = Vue.component("home-view", {
                         </li>
                     </ul>
 
-
-                    <div id="example-1">
-                    <div class="panel panel-primary" v-for="(empresa, index) in empresas">
-                        <div class="panel-heading">
-                            {{ empresa.nome }}
-                            <a href="#" class="pull-right" @click="delete_empresa(empresa.url, index)"><i class="fa fa-close fa-fw"></i></a>
-                            <router-link class="pull-right"  :to="'/editar-empresa/'+ empresa.id"><i class="fa fa-edit fa-fw"></i></router-link>
+<div class="p-2" v-for="(empresa, index) in empresas">
+<v-flex py-2>
+                    <v-card class="elevation-12">
+                      <v-toolbar dark color="primary">
+                        <v-toolbar-title>{{ empresa.nome }}</v-toolbar-title>
 
 
+                        <v-spacer></v-spacer>
+                        <v-tooltip bottom>
+                          <v-btn
+                            slot="activator"
+                            href="#"
+                            icon
+                            large
+
+                            @click="delete_empresa(empresa.url, index)"
+                          >
+                            <v-icon large>close</v-icon>
+                          </v-btn>
+                          <span>Remover</span>
+                        </v-tooltip>
+
+                        <v-tooltip bottom>
+                          <v-btn
+                            slot="activator"
+                            :href="'#/editar-empresa/'+ empresa.id"
+                            icon
+                            large
+
+                          >
+                            <v-icon large>edit</v-icon>
+                          </v-btn>
+                          <span>Editar</span>
+                        </v-tooltip>
+                      </v-toolbar>
+                      <v-card-text>
 
 
-                        </div>
-                        <div class="panel-body">
-                        <h3>Contato:</h3>
-                        <p>Telefone: {{ empresa.telefone }}</p>
-                        <p>E-mail: {{ empresa.email }}</p>
-                        </div>
-                        <div class="panel-footer">
-                            Panel Footer
-                        </div>
-                    </div>
+                      <h3>Contato:</h3>
+                      <p>Telefone: {{ empresa.telefone }}</p>
+                      <p>E-mail: {{ empresa.email }}</p>
+
+                      </v-card-text>
+                    </v-card>
+                    </v-flex>
+
+</div>
 
 
+</v-flex>
 
-    </div>
-
-                    </div>
-                </v-flex>
             </v-layout>
-        </v-container>
-    </v-responsive>
-    </div>
+
   `,
     props: [],
     $_veeValidate: {
@@ -82,9 +114,9 @@ var Empresas = Vue.component("home-view", {
     },
     methods: {
         get_empresas() {
-            axios.get(api_link + '/empresas/').then(response => {
+            axios.get(api_link + 'empresas/').then(response => {
             this.empresas = response.data;
-            console.log(this.user)
+            console.log(this.empresas)
         })
         },
         delete_empresa(url, id) {

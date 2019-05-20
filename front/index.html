@@ -30,20 +30,12 @@
 
     <link rel="stylesheet" type="text/css" href="http://unpkg.com/vue-form-generator@2.0.0/dist/vfg.css">
 
-    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
-
-
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
 
 
 
 
-    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-
-<link href="vendor/morrisjs/morris.css" rel="stylesheet">
 
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuex@2.0.0"></script>
@@ -65,19 +57,107 @@
 <script src="https://unpkg.com/vchart"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.39.1/plotly.js"></script>
-<script src="app/vue-plotly.js"></script>
 
+<link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
-
-<link href="dist/css/sb-admin-2.css" rel="stylesheet">
+<script type="text/javascript" src="https://unpkg.com/vue-icon/lib/vue-feather.min.js"></script>
 </head>
 
 <body >
 
   <div id="app">
+    <template v-if="pronto && user && user.username.length">
+      <v-app id="inspire">
+        <v-navigation-drawer
+          v-model="drawer"
+          fixed
+          app
+        >
+          <v-list dense>
+            <v-list-tile @click="home">
+              <v-list-tile-action>
+                <v-icon>home</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Home</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile :href="'#/empresas'">
+              <v-list-tile-action>
+                <v-icon>contact_mail</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Contact</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
+        </v-navigation-drawer>
+        <v-toolbar color="indigo" dark fixed app>
+          <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+          <v-toolbar-title>Application</v-toolbar-title>
+        </v-toolbar>
+        <v-content>
+          <v-container fluid fill-height>
+            <v-layout
+              justify-center
+              align-center
+            >
+              <v-flex text-xs-center>
+                <router-view ></router-view>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-content>
+        <v-footer color="indigo" app>
+          <span class="white--text">&copy; 2017</span>
+        </v-footer>
+        </v-app>
+    </template>
+
+    <template v-else-if="pronto">
+<v-app id="inspire">
+        <v-content>
+          <v-container fluid fill-height>
+            <v-layout align-center justify-center>
+              <v-flex xs12 sm8 md4>
+                <v-card class="elevation-12">
+                  <v-toolbar dark color="primary">
+                    <v-toolbar-title>Login form</v-toolbar-title>
+                    <v-spacer></v-spacer>
+
+                    <v-tooltip right>
+                      <v-btn slot="activator" icon large href="https://codepen.io/johnjleider/pen/wyYVVj" target="_blank">
+                        <v-icon large>mdi-codepen</v-icon>
+                      </v-btn>
+                      <span>Codepen</span>
+                    </v-tooltip>
+                  </v-toolbar>
+                  <v-card-text>
+                    <v-form>
+                      <v-text-field v-model="model.username" prepend-icon="person" name="login" label="Login" type="text"></v-text-field>
+                      <v-text-field v-on:keyup.enter="login" v-model="model.password" id="password" prepend-icon="lock" name="password" label="Password" type="password"></v-text-field>
+                    </v-form>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="login" color="primary">Login</v-btn>
 
 
-  <template v-if="pronto && user && user.username.length" class="paginabranco">
+
+
+
+
+                  </v-card-actions>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-content>
+        </v-app>
+    </template>
+
+
+  <template v-if="show && pronto && user && user.username.length" class="paginabranco">
 
 
 
@@ -358,7 +438,7 @@
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
-            
+
                         <!--
                         <li>
                             <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
@@ -450,7 +530,7 @@
 </div>
     </template>
 
-    <template v-else-if="pronto" class="">
+    <template v-else-if="show && pronto" class="">
 
 
       <div class="container">
@@ -499,23 +579,9 @@
 
     </template>
     </div>
-    <!-- /#wrapper -->
-    <!-- jQuery -->
-    <script src="vendor/jquery/jquery.min.js"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="vendor/metisMenu/metisMenu.min.js"></script>
 
-    <!-- Morris Charts JavaScript -->
-    <script src="vendor/raphael/raphael.min.js"></script>
-    <script src="vendor/morrisjs/morris.min.js"></script>
-    <script src="data/morris-data.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="dist/js/sb-admin-2.js"></script>
     <script>
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -528,7 +594,8 @@ if (state.token) {
   console.log('Token ' + state.token)
 }
 
-    const api_link = 'http://indicadoresufal.pythonanywhere.com/';
+    //const api_link = 'https://indicadoresufal.pythonanywhere.com/';
+    const api_link = 'http://localhost:8000/';
 a = {};
 
   </script>
