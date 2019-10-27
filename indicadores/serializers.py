@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Pesquisador, Indicador, Resultado
+from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Pesquisador, Indicador, Resultado, ResultadoCalculado
 
 class ClienteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -24,8 +24,6 @@ class EmpreendimentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Empreendimento
         fields = '__all__'
-
-
 
 class ReferenciaSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -58,8 +56,7 @@ class PesquisadorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
-
-
-
-# Ewerton Escreve aqui em baixo:
+class ResultadoCalculadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResultadoCalculado
+        fields = ['empreendimento', 'referencia', 'indicador', 'valor']

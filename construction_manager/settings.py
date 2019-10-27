@@ -25,7 +25,7 @@ SECRET_KEY = 'i_g9@=xk()@1f32ur=#mh=efu9d8=1x+i=dmh*o-9@fc$_2&(w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['indicadoresufal.pythonanywhere.com']
+ALLOWED_HOSTS = ['indicadoresufal.pythonanywhere.com', 'localhost']
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_jwt',
+    'url_filter',
 
 ]
 
@@ -141,6 +142,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': (
+       'url_filter.integrations.drf.DjangoFilterBackend',
+    ),
 }
 
 CSRF_COOKIE_NAME = "csrftoken"
@@ -155,7 +159,7 @@ CORS_ALLOW_HEADERS = (
         'origin',
         'authorization',
         'x-csrftoken'
-    )
+)
 
 from datetime import timedelta
 
@@ -166,5 +170,5 @@ JWT_AUTH = {
 }
 
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static-root')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

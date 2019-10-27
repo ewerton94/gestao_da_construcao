@@ -51,7 +51,7 @@ class ResultadoForm(forms.ModelForm):
 class PesquisadorForm(forms.ModelForm):
 
     class Meta:
-        model = Resultado
+        model = Pesquisador
         fields = '__all__'
 
 
@@ -61,4 +61,4 @@ from .models import Resultado
 class ResultadoForm(forms.ModelForm):
     class Meta:
         model = Resultado
-        fields = ['empreendimento', 'referencia', 'conferido_por']
+        fields = ['empreendimento', 'referencia']
