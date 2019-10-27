@@ -1,8 +1,8 @@
 var RespostaIndicadores = Vue.component("resposta-indicadores-view", {
     data: function () {
         return {
-            model: {},
-            schema: {},           
+            forms: [],    
+            model: {},   
             formOptions: {
                 validateAfterLoad: false,
                 validateAfterChanged: false
@@ -23,6 +23,7 @@ var RespostaIndicadores = Vue.component("resposta-indicadores-view", {
                     <h3 class="display-3">Respoder com informações de indicadores</h3>
                
                     <span class="subheading">Resposta mensal</span>
+              
                     <v-divider class="my-3"></v-divider>
                     <ul v-if="errors && errors.length">
                         <li v-for="error of errors">
@@ -38,8 +39,24 @@ var RespostaIndicadores = Vue.component("resposta-indicadores-view", {
                         
                         </li>
                     </ul>
-                    <div>
-                    <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
+                    <div v-if=" !success.length">
+                    <div v-for="form of forms" class="my-5">
+                    <template >
+  <div v-if="form.titulo">
+    <v-toolbar color="blue darken-1" dark>
+      <v-toolbar-title>{{ form.titulo }}</v-toolbar-title>
+
+      <div class="flex-grow-1"></div>
+
+     
+
+      
+    </v-toolbar>
+  </div>
+  </template>
+                    <vue-form-generator :schema="form.schema" :model="model" :options="formOptions"></vue-form-generator>
+
+                    </div>
                     <v-btn large color="blue" class="mx-0" @click="send">Enviar</v-btn>
                     </div>
                     
@@ -65,8 +82,10 @@ var RespostaIndicadores = Vue.component("resposta-indicadores-view", {
     methods: {
         get_form() {
             axios.get(api_link + 'form_indicadores/').then(response => {
-            this.schema = response.data.schema;
-            this.model = response.data.model;
+                this.forms = response.data
+            //this.schema = response.data.schema;
+            console.log(this.forms);
+            //this.model = response.data.model;
         })},
         send() {
             this.loading = true;

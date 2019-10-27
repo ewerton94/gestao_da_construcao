@@ -28,7 +28,7 @@
 
 
 
-    <link rel="stylesheet" type="text/css" href="http://unpkg.com/vue-form-generator@2.0.0/dist/vfg.css">
+    <link rel="stylesheet" type="text/css" href="http://unpkg.com/vue-form-generator@2.3.4/dist/vfg.css">
 
 <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
 
@@ -43,7 +43,7 @@
 
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 
-    <script type="text/javascript" src="http://unpkg.com/vue-form-generator@2.0.0"></script>
+    <script type="text/javascript" src="http://unpkg.com/vue-form-generator@2.3.4"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -58,8 +58,9 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.39.1/plotly.js"></script>
 
-<link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.min.css" rel="stylesheet">
+<link href="dist/css/style.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.js"></script>
 <script type="text/javascript" src="https://unpkg.com/vue-icon/lib/vue-feather.min.js"></script>
 </head>
 
@@ -74,7 +75,7 @@
           app
         >
           <v-list dense>
-            <v-list-tile @click="home">
+            <v-list-tile :href="'#/'">
               <v-list-tile-action>
                 <v-icon>home</v-icon>
               </v-list-tile-action>
@@ -90,11 +91,42 @@
                 <v-list-tile-title>Contact</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
+
+            <v-list-tile :href="'#/resposta-indicadores'">
+              <v-list-tile-action>
+                <v-icon>contact_mail</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Responder</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
           </v-list>
         </v-navigation-drawer>
         <v-toolbar color="indigo" dark fixed app>
           <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-          <v-toolbar-title>Application</v-toolbar-title>
+          <v-toolbar-title>Indicadores</v-toolbar-title>
+          <v-spacer></v-spacer>
+
+          <v-menu bottom left>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                dark
+                icon
+                v-on="on"
+              >
+                <v-icon>more_vert</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list>
+              <v-list-tile
+                
+                @click="logout"
+              >
+                <v-list-tile-title>Sair</v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
         </v-toolbar>
         <v-content>
           <v-container fluid fill-height>
@@ -591,7 +623,7 @@
 };
 if (state.token) {
   axios.defaults.headers.common['Authorization'] = 'Token ' + state.token;
-  console.log('Token ' + state.token)
+
 }
 
     //const api_link = 'https://indicadoresufal.pythonanywhere.com/';

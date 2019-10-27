@@ -96,7 +96,7 @@ var Empresas = Vue.component("home-view", {
 </div>
 
 
-</v-flex>
+</v-flex> 
 
             </v-layout>
 
