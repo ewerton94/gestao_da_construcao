@@ -102,8 +102,10 @@ class Indicador(models.Model):
     def __str__(self):
         return self.titulo
 
-
-
+class TCPO(models.Model):
+    indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE, related_name='tcpos')
+    referencia = models.ForeignKey(Referencia, on_delete=models.CASCADE)
+    valor = models.FloatField()
 
 class Resultado(models.Model):
     empreendimento = models.ForeignKey(Empreendimento, on_delete=models.CASCADE)
