@@ -58,7 +58,7 @@ var Empreendimentos = Vue.component("listar-empreendimento-view", {
                     <v-tooltip float-right>
                     <v-btn
                         slot="activator"
-                        @click="gerar_codigos"
+                        @click="gerar_codigos" 
                         icon
                         large
 
@@ -114,7 +114,7 @@ var Empreendimentos = Vue.component("listar-empreendimento-view", {
                         <v-tooltip bottom>
                           <v-btn
                             slot="activator"
-                            :href="'/editar-empreendimento/'+ empreendimento.id"
+                            :href="'#/editar-empreendimento/'+ empreendimento.id"
                             icon
                             large
                          

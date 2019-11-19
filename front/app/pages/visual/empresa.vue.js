@@ -2,7 +2,7 @@ var ResultadoIndicadoresParaEmpresa = Vue.component("home-view", {
     data: function () {
         return {
           resultados: [],
-          loading: false,
+          loading: false, 
           data: [{ x: [1, 3], y: [2, 4] }],
             layout: {},
             options: {},
@@ -17,7 +17,7 @@ var ResultadoIndicadoresParaEmpresa = Vue.component("home-view", {
 
   
     
-            <flex-box align-center sm>
+           
                 <v-responsive sm>
                     <h3 class="display-3">Resultados gerais </h3>
 
@@ -36,7 +36,7 @@ var ResultadoIndicadoresParaEmpresa = Vue.component("home-view", {
                     <v-flex width="500" max-height="300"><div  ref="um"></div></v-flex>
                     
                 </v-responsive>
-            </flex-box>
+
 
 
     </div>
@@ -47,6 +47,7 @@ var ResultadoIndicadoresParaEmpresa = Vue.component("home-view", {
     },
     created() {
       this.get_resultados();
+     
       
 
 
@@ -55,7 +56,7 @@ var ResultadoIndicadoresParaEmpresa = Vue.component("home-view", {
       
       get_resultados(){
         this.loading = true;
-            axios.get(api_link + 'resultados/por_referencia/', {})
+            axios.get(api_link + 'resultados/por_empresa/', {})
             .then(response => {
                 //app.success = [
                 //    'Resposta enviada com sucesso!'
@@ -63,6 +64,7 @@ var ResultadoIndicadoresParaEmpresa = Vue.component("home-view", {
                 //console.log(app.success)
                 
                 this.resultados = response.data;
+             
                 var that = this;
                 this.resultados.forEach(function(r, index) {
                   that.indicadores.push(r.nome);
@@ -70,10 +72,11 @@ var ResultadoIndicadoresParaEmpresa = Vue.component("home-view", {
           
                 
                 this.troca_resultados(this.resultados[0].nome);
-                console.log(this.resultados);
+       
                 
             })
             .catch(e => {
+              console.log(e)
               this.errors.push(e)
             })
 
@@ -84,7 +87,7 @@ var ResultadoIndicadoresParaEmpresa = Vue.component("home-view", {
 
           that.resultados.forEach(function(r, index) {
             var comp = r.nome + ' - ' + nome_indicador;
-            console.log(comp)
+     
             if (r.nome == nome_indicador){
               var resultado = r;
               that.plota_resultados(resultado, false);
@@ -99,25 +102,31 @@ var ResultadoIndicadoresParaEmpresa = Vue.component("home-view", {
       },
         plota_resultados(resultado, novo) {
           
-          console.log(window.innerWidth)
-          
+          console.log(resultado.dados)
+          var traces = [];
+          for (var i=0; i<resultado.dados.length;i++) {
+            console.log(resultado.dados[i].empreendimento)
+            console.log(resultado.dados[i])
           var trace1 = {
-            x: resultado.legendas,
-            y: resultado.valores,
+            x: resultado.dados[i].legendas,
+            y: resultado.dados[i].valores,
             mode: 'lines+markers',
-            name: 'Média'
+            name: resultado.dados[i].empreendimento
           };
+          traces.push(trace1)
+
+        }
           
           var trace2 = {
-            x: resultado.legendas,
-            y: resultado.tcpo,
+            x: resultado.dados[0].legendas,
+            y: resultado.dados[0].tcpo,
             mode: 'lines',
             name: 'TCPO'
           };
           
-        
+          traces.push(trace2)
           
-          var data = [ trace1, trace2 ];
+          var data = traces;
           
           
 

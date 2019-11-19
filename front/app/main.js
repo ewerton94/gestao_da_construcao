@@ -18,6 +18,7 @@ const routes = [
   { path: '/bar', component: Bar },
   { path: '/resposta-indicadores', component: RespostaIndicadores },
   { path: '/resultados-indicadores', component: ResultadoIndicadores },
+  { path: '/resultados-indicadores-internos', component: ResultadoIndicadoresParaEmpresa },
   { path: '/empresas', component: Empresas, name:'empresas' },
   { path: '/nova-empresa', component: NovaEmpresa },
   { path: '/editar-empresa/:id', component: EditarEmpresa, name: 'editar-empresa'},
@@ -134,7 +135,9 @@ const app = new Vue({
         axios.defaults.withCredentials = true;
 
           axios.get(api_link + 'obtem_usuario_logado/', ).then(response => {
+            //console.log(response.data)
           this.user = response.data.user;
+          localStorage.setItem('user', JSON.stringify(this.user) || '{}');
           this.pronto = true;
 
           localStorage.setItem('user-pesquisador', response.data.pesquisador || 0);

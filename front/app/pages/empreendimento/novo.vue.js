@@ -30,15 +30,18 @@ var NovoEmpreendimento = Vue.component("novo-empreendimento-view", {
                         {{error.message}}
                         </li>
                     </ul>
-                    <ul v-if="success && success.length">
 
-                        <li style="list-style-type: none;" v-for="message of success">
-                        <div class="alert alert-success">
-                        {{message}}. <a href="#/empreendimentos" class="alert-link">Ver lista de empreendimentos</a>.
-                        </div>
-
+                    <ul v-if="success && success.length" style="list-style-type:none;padding:0;">
+                        <li v-for="message of success">
+                        <v-alert
+                        :value="true"
+                        type="success"
+                        >
+                        {{message}}. <a href="#/empreendimentos" style="color:white;">Ver lista de empreendimentos</a>.
+                        </v-alert>
                         </li>
                     </ul>
+                    
                     <div v-if="schema.fields && schema.fields.length">
                     <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
                     <v-btn large color="blue" class="mx-0" @click="send">Criar</v-btn>
