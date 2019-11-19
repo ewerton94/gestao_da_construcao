@@ -7,71 +7,141 @@ var Empreendimentos = Vue.component("listar-empreendimento-view", {
         }
       },
     template: /*html*/`
-    <div id="page-wrapper">
 
 
-    <v-responsive color="grey lighten-2">
-        <v-container fill-height>
             <v-layout align-center>
                 <v-flex >
-                <div class="col-md-10">
-                    <h3  class="display-3">Empreendimentos Cadastrados <router-link class="btn btn-primary" to="/novo-empreendimento"><i class="fa fa-plus fa-fw"></i></router-link> <a class="btn btn-primary" @click="gerar_codigos"><i class="fa fa-refresh fa-fw"></i></a></h3>
+                
 
-                    <span class="subheading">Lista de empreendimentos cadastrados no projeto.</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <h3 class="display-3">Empreendimentos Cadastrados
+
+                    <v-tooltip float-right>
+                      <v-btn
+                        slot="activator"
+                        href="#/novo-empreendimento"
+                        icon
+                        large
+
+                      >
+                        <v-icon large>add_box</v-icon>
+                      </v-btn>
+                      <span>Adicionar empreendimento</span>
+                    </v-tooltip>
+                    <v-tooltip float-right>
+                    <v-btn
+                        slot="activator"
+                        @click="gerar_codigos" 
+                        icon
+                        large
+
+                      >
+                        <v-icon large>refresh</v-icon>
+                      </v-btn>
+                      <span>Gerar códigos</span>
+                    </v-tooltip>
+
+                    </h3>
+
+
+                    <span class="subheading">Lista de empreendimentos cadastradas no projeto.</span>
                     <v-divider class="my-3"></v-divider>
-                    <ul v-if="errors && errors.length">
+                    <ul v-if="errors && errors.length" style="list-style-type:none;padding:0;">
                         <li v-for="error of errors">
                         {{error.message}}
                         </li>
                     </ul>
-                    <ul v-if="success && success.length">
-                    <li style="list-style-type: none;" v-for="message of success">
-                    <div class="alert alert-success">
-                    {{message}}.
-                    </div>
-
-                    </li>
+                    <ul v-if="success && success.length" style="list-style-type:none;padding:0;">
+                        <li v-for="message of success">
+                        <v-alert
+                        :value="true"
+                        type="success"
+                        >
+                        {{message}}.
+                        </v-alert>
+                        </li>
                     </ul>
 
-
-                    <div v-if="empreendimentos && empreendimentos.length">
-                    <div class="panel panel-primary p-0 m-0" v-for="(empreendimento, index) in empreendimentos">
-                        <div class="panel-heading">
-                            {{ empreendimento.nome }}
-                            <a href="#" class="pull-right" @click="delete_empreendimento(empreendimento.id, index)"><i class="fa fa-close fa-fw"></i></a>
-                            <router-link class="pull-right"  :to="'/editar-empreendimento/'+ empreendimento.id"><i class="fa fa-edit fa-fw"></i></router-link>
+<div class="p-2" v-for="(empreendimento, index) in empreendimentos">
+<v-flex py-2>
+                    <v-card class="elevation-12">
+                      <v-toolbar dark color="primary">
+                        <v-toolbar-title>{{ empreendimento.nome }} ({{ empreendimento.codigo }})</v-toolbar-title>
 
 
+                        <v-spacer></v-spacer>
+                        <v-tooltip bottom>
+                          <v-btn
+                            slot="activator"
+                            href="#"
+                            icon
+                            large
+
+                            @click="delete_empreendimento(empreendimento.id, index)"
+                          >
+                            <v-icon large>close</v-icon>
+                          </v-btn>
+                          <span>Remover</span>
+                        </v-tooltip>
+
+                        <v-tooltip bottom>
+                          <v-btn
+                            slot="activator"
+                            :href="'#/editar-empreendimento/'+ empreendimento.id"
+                            icon
+                            large
+                         
+                          >
+                            <v-icon large>edit</v-icon>
+                          </v-btn>
+                          <span>Editar</span>
+                        </v-tooltip>
+                      </v-toolbar>
+                      <v-card-text>
 
 
-                        </div>
-                        <div class="panel-body">
-                        <h3>Dados:</h3>
+                      <h3>Dados:</h3>
                         <p>Empresa: {{ empreendimento.empresa }}</p>
                         <p>Local: {{ empreendimento.empresa.nome }}</p>
-                        </div>
-                        <div class="panel-footer">
-                            {{ empreendimento.codigo }}
-                        </div>
-                    </div>
+                     
+                        
 
+                      </v-card-text>
+                    </v-card>
+                    </v-flex>
 
+</div>
 
-                    </div>
-
-                    <div v-else>
-                    <div class="alert alert-danger">
-                    Sem empreendimentos.
-                    </div>
-                    </div>
-
-                    </div>
 
                 </v-flex>
             </v-layout>
-        </v-container>
-    </v-responsive>
-    </div>
   `,
     props: ["title"],
     $_veeValidate: {

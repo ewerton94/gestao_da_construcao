@@ -5,15 +5,22 @@ from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login as auth_login
 
-from .forms import ClienteForm, UserForm, EmpresaForm, EmpreendimentoForm, ReferenciaForm, TipoIndicadorForm, PesquisadorForm, IndicadorForm, ResultadoForm
+from .forms import EmpreendimentoRestritoForm, ClienteForm, UserForm, EmpresaForm, EmpreendimentoForm, ReferenciaForm, TipoIndicadorForm, PesquisadorForm, IndicadorForm, ResultadoForm
 from .schemas import get_schema
 from .exceptions import *
 from .serializers import ClienteSerializer, UserSerializer, EmpresaSerializer, EmpreendimentoSerializer, ReferenciaSerializer, TipoIndicadorSerializer, IndicadorSerializer, ResultadoSerializer, PesquisadorSerializer
-from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Pesquisador, Indicador, Resultado
+from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Pesquisador, Indicador, Resultado, ResultadoCalculado
+from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 
 
-
-def generic_create_view(request, Model, Serializer, Form):
+def generic_create_view(request, Model, Serializer, Form, verificar_empresa_cliente=False):
+    if verificar_empresa_cliente:
+        request.data['empresa'] = request.user.cliente.empresa.id
+        print(request.data)
     if request.method == 'POST':
         serializer = Serializer(data=request.data)
         print(dir(serializer))
@@ -48,21 +55,14 @@ def generic_update_view(request, Model, Serializer, Form, id):
         raise MethodNotAllowed()
 
 
-
-from django.contrib.auth import authenticate
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-
-
 @csrf_exempt
 @api_view(['GET'])
 def obtem_usuario_logado(request):
     if request.method == 'GET':
         user = request.user
-        print(request.auth)
-        print(user)
+        permissions = user.get_all_permissions()
+        view_permissions = [e.split('_')[1] for e in permissions if 'view' in e]
+        add_permissions = [e.split('_')[1] for e in permissions if 'add' in e]
         if user.is_authenticated:
             cliente = Cliente.objects.filter(user=user).first()
             pesquisador = Pesquisador.objects.filter(user=user).first()
@@ -77,8 +77,52 @@ def obtem_usuario_logado(request):
                 pesquisador = pesquisador.id
             else:
                 pesquisador = None
-            return Response({'user': {'id': user.id, 'nome': nome, 'username': user.username}, 'cliente': cliente, 'pesquisador': pesquisador})
+            
+            return Response({'user': {'id': user.id, 'nome': nome, 'username': user.username, 'view_permissions':view_permissions, 'add_permissions':add_permissions}, 'cliente': cliente, 'pesquisador': pesquisador})
         raise UsuarioNaoEncontrado()
+    raise MethodNotAllowed()
+
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def atualizar_calculos(request):
+    if request.method == 'GET':
+        resultados_a_calcular = Resultado.objects.select_related().filter(calculado=False)
+        empreendimentos = resultados_a_calcular.values_list('empreendimento_id', 'empreendimento_id').distinct()
+        referencias = resultados_a_calcular.values_list('referencia_id', 'empreendimento_id').distinct()
+        indicadores = resultados_a_calcular.values_list('indicador_id', 'empreendimento_id').distinct()
+        resultados_calculados = []
+        for empreendimento, _ in empreendimentos:
+            r_e = resultados_a_calcular.filter(empreendimento_id=empreendimento)
+            for referencia, _ in referencias:
+                r_r = r_e.filter(referencia_id=referencia)
+                for indicador, _ in indicadores:
+                    r_i = r_r.filter(indicador_id=indicador)
+                    if r_i:
+                        formula = r_i[0].indicador.unit
+                        #print('Formula inicial: ', formula)
+                        for k, v in r_i.values_list('campo_indicador__nome_variavel', 'valor'):
+                            if k:
+                                #print(k, v)
+                                formula = formula.replace(k, str(v))
+                                #print(k, '=', str(v))
+                        #print(formula)
+                        valor = eval(formula)
+                        #print(valor)
+                        resultados_calculados.append(ResultadoCalculado(
+                            empreendimento_id=empreendimento,
+                            referencia_id=referencia,
+                            indicador_id=indicador,
+                            valor=valor
+                        ))
+        if resultados_calculados:
+            ResultadoCalculado.objects.bulk_create(resultados_calculados)
+            resultados_a_calcular.update(calculado=True)
+            return Response('Cálculos Atualizados!')
+        return Response('nenhum indicador a calcular!')
+                        
+
+
     raise MethodNotAllowed()
 
 @api_view(['GET'])
@@ -139,11 +183,15 @@ def form_editar_empresas(request, id):
 
 @api_view(['GET','POST'])
 def criar_empreendimento(request):
-    return generic_create_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm)
-
+    if request.user.is_staff:
+        return generic_create_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm)
+    return generic_create_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoRestritoForm, True)
+    
 @api_view(['GET','POST'])
 def editar_empreendimento(request, id):
-    return generic_update_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm, id)
+    if request.user.is_staff:
+        return generic_update_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm, id)
+    return generic_update_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoRestritoForm, id)
 
 #CLIENTE
 
@@ -253,27 +301,25 @@ def form_indicadores(request):
     if request.method == 'POST':
         data = request.data
         fixo = ['conferido_por', 'referencia', 'empreendimento']
-        cliente = Cliente.objects.get(id=data['conferido_por'])
-        referencia = Referencia.objects.get(id=data['referencia'])
-        empreendimento = Empreendimento.objects.get(id=data['empreendimento'])
+        #cliente = Cliente.objects.get(id=data['conferido_por'])
+        #referencia = Referencia.objects.get(id=data['referencia'])
+        #empreendimento = Empreendimento.objects.get(id=data['empreendimento'])
         indicadores = {}
         for key, value in data.items():
+            key = key.split('-')
             if key[0].isdigit():
                 indicadores.setdefault(int(key[0]), {})[key[-1]] = value
-        for id, respostas in indicadores.items():
-            indicador = Indicador.objects.get(id=id)
+        for indicador_id, respostas in indicadores.items():
             r = {}
-            for i in range(1, 3):
-                r[i] = respostas.get(str(i), 0)
-
-            Resultado.objects.create(
-                conferido_por=cliente,
-                referencia=referencia,
-                empreendimento=empreendimento,
-                indicador=indicador,
-                valor_campo_1=r[1],
-                valor_campo_2=r[2]
-            )
+            for campo_indicador_id, resposta in respostas.items():
+                Resultado.objects.create(
+                    conferido_por_id=request.user.cliente.id,
+                    referencia_id=data['referencia'],
+                    empreendimento_id=data['empreendimento'],
+                    indicador_id=indicador_id,
+                    campo_indicador_id=campo_indicador_id,
+                    valor=resposta
+                )
 
         return Response('ok')
 
@@ -281,47 +327,59 @@ def form_indicadores(request):
 
 
     if request.method == 'GET':
-        form = ResultadoForm()
+        forms_tipos = []
+        if request.user.is_staff:
+            form = ResultadoForm(empresa=None)
+        else:
+            form = ResultadoForm(empresa=request.user.cliente.empresa)
         schema = get_schema(form)
-        indicadores = Indicador.objects.filter(tipo__modelo='mensal')
+        fields = []
+        for f in schema['schema']['fields']:
+            f['styleClasses'] = 'px-1'
 
         schema['schema'] = {
-            'groups':[
-                {
-                    'legend': 'Dados de identificação da resposta',
-                    'fields': schema['schema']['fields']
-                }
-            ]
-        }
-        for indicador in indicadores:
-            op = [
-                {'label': indicador.campo1,'model': str(indicador.id)+'-valor_campo_1' },
-                {'label': indicador.campo2,'model': str(indicador.id)+'-valor_campo_2' }
-            ]
-            schema['schema']['groups'].append(
-                {
-                    'legend': indicador.titulo,
-                    'styleClasses':'row',
-                    'tag': 'div',
-                    'fields': [
-                        {
+                'groups':[
+                    {
+                        'legend': 'Dados de identificação da resposta',
+                        'fields': schema['schema']['fields']
+                    }
+                ]
+            }
+        forms_tipos.append(schema)
+        for tipo in TipoIndicador.objects.filter(modelo='mensal').prefetch_related('campos'):
+            schema = {'titulo': tipo.titulo, 'schema': {'groups': []}}
+            indicadores = tipo.indicadores.all()
 
-                                'type': "input",
-                                'inputType': "number",
-                                'id': e['model'],
-                                'label': e['label'],
-                                'model': e['model'],
-                                'styleClasses':'col-md-6',
-                                'tag': 'div',
+          
+            for indicador in indicadores:
+                op = [
+                    {'label': campo_indicador.campo, 'inputType': campo_indicador.type_value , 'model': str(indicador.id)+'-valor_campo-'+ str(campo_indicador.id) } for campo_indicador in indicador.tipo.campos.all() 
+                ]
+                schema['schema']['groups'].append(
+                    {
+                        'legend': indicador.titulo,
+                        'styleClasses':'row',
+                        'tag': 'div',
+                        'fields': [
+                            {
 
-
-
-                        } for e in op
-                    ]
-                }
-            )
+                                    'type': "input",
+                                    'inputType': e['inputType'],
+                                    'id': e['model'],
+                                    'label': e['label'],
+                                    'model': e['model'],
+                                    'styleClasses':'col-md-4 col-12 mx-1',
+                                    'tag': 'div',
 
 
-        return Response(schema)
+
+                            } for e in op
+                        ]
+                    }
+                )
+            forms_tipos.append(schema)
+
+
+        return Response(forms_tipos)
     else:
         raise MethodNotAllowed

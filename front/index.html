@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Indicadores</title>
+    <title>Indicadores para Benchmarking</title>
 
     <!-- Bootstrap Core CSS -->
 
@@ -28,7 +28,7 @@
 
 
 
-    <link rel="stylesheet" type="text/css" href="http://unpkg.com/vue-form-generator@2.0.0/dist/vfg.css">
+    <link rel="stylesheet" type="text/css" href="http://unpkg.com/vue-form-generator@2.3.4/dist/vfg.css">
 
 <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
 
@@ -43,7 +43,7 @@
 
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 
-    <script type="text/javascript" src="http://unpkg.com/vue-form-generator@2.0.0"></script>
+    <script type="text/javascript" src="http://unpkg.com/vue-form-generator@2.3.4"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -58,8 +58,9 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.39.1/plotly.js"></script>
 
-<link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.min.css" rel="stylesheet">
+<link href="dist/css/style.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.js"></script>
 <script type="text/javascript" src="https://unpkg.com/vue-icon/lib/vue-feather.min.js"></script>
 </head>
 
@@ -70,11 +71,15 @@
       <v-app id="inspire">
         <v-navigation-drawer
           v-model="drawer"
-          fixed
-          app
+          
+          
+            fixed
+          
+          
+          temporary
         >
           <v-list dense>
-            <v-list-tile @click="home">
+            <v-list-tile :href="'#/'">
               <v-list-tile-action>
                 <v-icon>home</v-icon>
               </v-list-tile-action>
@@ -82,25 +87,59 @@
                 <v-list-tile-title>Home</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile :href="'#/empresas'">
+
+
+            <v-list-tile v-if="user.add_permissions.indexOf('empreendimento')!=-1" :href="'#/empreendimentos'">
+                  <v-list-tile-action>
+                    <v-icon>business</v-icon>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>Empreendimentos</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+
+            <v-list-tile :href="'#/resposta-indicadores'">
               <v-list-tile-action>
                 <v-icon>contact_mail</v-icon>
               </v-list-tile-action>
               <v-list-tile-content>
-                <v-list-tile-title>Contact</v-list-tile-title>
+                <v-list-tile-title>Responder</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
           </v-list>
         </v-navigation-drawer>
         <v-toolbar color="indigo" dark fixed app>
           <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-          <v-toolbar-title>Application</v-toolbar-title>
+          <v-toolbar-title>Indicadores para Benchmarking</v-toolbar-title>
+          <v-spacer></v-spacer>
+
+          <v-menu bottom left>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                dark
+                icon
+                v-on="on"
+              >
+                <v-icon>more_vert</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list>
+              <v-list-tile
+                
+                @click="logout"
+              >
+                <v-list-tile-title>Sair</v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
         </v-toolbar>
         <v-content>
-          <v-container fluid fill-height>
+          <v-container fluid >
             <v-layout
               justify-center
               align-center
+              
             >
               <v-flex text-xs-center>
                 <router-view ></router-view>
@@ -108,12 +147,49 @@
             </v-layout>
           </v-container>
         </v-content>
-        <v-footer color="indigo" app>
-          <span class="white--text">&copy; 2017</span>
-        </v-footer>
+        <v-footer
+    dark
+ 
+  >
+  <v-container fluid style="background-color: rgb(39, 39, 39);">
+    <v-row dense color="dark" >
+      
+        <v-layout >
+            <v-flex >
+            <v-img
+            src="img/logo-ufal.png"
+            contain
+        
+            height="100px"
+          ></v-img></v-flex>
+
+         
+        <v-flex>   
+            <p class="py-2 white--text text-center" style="text-align: center;">
+                &copy; {{ new Date().getFullYear() }} — <strong>Indicadores para Benchmarking</strong>
+            </p>
+    </v-flex>
+ 
+    <v-flex >
+        <v-img
+        src="img/logo-ademi.png"
+
+        contain
+        height="100px"
+      ></v-img></v-flex>
+
+
+</v-layout>
+    
+
+
+
+    </v-row>
+    
+  </v-footer>
         </v-app>
     </template>
-
+    
     <template v-else-if="pronto">
 <v-app id="inspire">
         <v-content>
@@ -122,7 +198,7 @@
               <v-flex xs12 sm8 md4>
                 <v-card class="elevation-12">
                   <v-toolbar dark color="primary">
-                    <v-toolbar-title>Login form</v-toolbar-title>
+                    <v-toolbar-title>Autenticação</v-toolbar-title>
                     <v-spacer></v-spacer>
 
                     <v-tooltip right>
@@ -172,7 +248,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <router-link class="navbar-brand" to="/">Benchmarking</router-link>
+                <router-link class="navbar-brand" to="/">Indicadores para Benchmarking</router-link>
             </div>
             <!-- /.navbar-header -->
             <ul class="nav navbar-top-links navbar-right pull-right">
@@ -591,7 +667,7 @@
 };
 if (state.token) {
   axios.defaults.headers.common['Authorization'] = 'Token ' + state.token;
-  console.log('Token ' + state.token)
+
 }
 
     //const api_link = 'https://indicadoresufal.pythonanywhere.com/';
@@ -601,7 +677,8 @@ a = {};
   </script>
     <script src="app/home.vue.js" ></script>
     <script src="app/pages/indicadores/resposta_indicadores.vue.js" ></script>
-    <script src="app/pages/visual/home.vue.js" ></script>
+    <script src="app/pages/visual/geral.vue.js" ></script>
+    <script src="app/pages/visual/empresa.vue.js" ></script>
     <script src="app/pages/empresa/empresas.vue.js" ></script>
     <script src="app/pages/empresa/nova_empresa.vue.js" ></script>
     <script src="app/pages/empresa/editar_empresa.vue.js" ></script>

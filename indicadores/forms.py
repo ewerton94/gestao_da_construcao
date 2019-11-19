@@ -12,6 +12,12 @@ class EmpreendimentoForm(forms.ModelForm):
         model = Empreendimento
         fields = ['nome', 'empresa']
 
+class EmpreendimentoRestritoForm(forms.ModelForm):
+
+    class Meta:
+        model = Empreendimento
+        fields = ['nome',]
+
 class ClienteForm(forms.ModelForm):
 
     class Meta:
@@ -51,7 +57,7 @@ class ResultadoForm(forms.ModelForm):
 class PesquisadorForm(forms.ModelForm):
 
     class Meta:
-        model = Resultado
+        model = Pesquisador
         fields = '__all__'
 
 
@@ -61,4 +67,9 @@ from .models import Resultado
 class ResultadoForm(forms.ModelForm):
     class Meta:
         model = Resultado
-        fields = ['empreendimento', 'referencia', 'conferido_por']
+        fields = ['empreendimento', 'referencia']
+
+    def __init__(self, empresa, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if empresa is not None:
+            self.fields['empreendimento'].queryset = self.fields['empreendimento'].queryset.filter(empresa=empresa)

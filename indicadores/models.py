@@ -63,30 +63,62 @@ class Empreendimento(models.Model):
 
 class Referencia(models.Model):
     texto = models.CharField(max_length=500)
+    situacao = models.BooleanField(default=True)
     def __str__(self):
         return self.texto
+
+TYPES_OF_VALUE = (
+    ('number', 'Aberta (Número inteiro)'),
+    ('number', 'Aberta (Número decimal)'),
+    ('text', 'Aberta (Texto)'),
+    ('select', 'Múltipla escolha'),
+)
+
+
+class CampoIndicador(models.Model):
+    #indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE, related_name='campos')
+    campo = models.CharField(max_length=500)
+    type_value = models.CharField(max_length=500, choices=TYPES_OF_VALUE)
+    nome_variavel = models.CharField(max_length=500, default='')
+
+    def __str__(self):
+        return self.campo + ' ' + self.type_value
 
 class TipoIndicador(models.Model):
     titulo = models.CharField(max_length=500)
     modelo = models.CharField(max_length=500, choices=TIPOS_INDICADOR)
+    campos = models.ManyToManyField(CampoIndicador, blank=True)
 
     def __str__(self):
         return self.titulo
 
 class Indicador(models.Model):
-    tipo = models.ForeignKey(TipoIndicador, on_delete=models.CASCADE)
+    class Meta:
+        ordering = ['ordem', 'id']
+    tipo = models.ForeignKey(TipoIndicador, on_delete=models.CASCADE, related_name='indicadores')
     titulo = models.CharField(max_length=500)
     descricao = models.TextField()
-    campo1 = models.CharField(max_length=500)
-    campo2 = models.CharField(max_length=500)
-
+    unit = models.CharField(max_length=500, default='')
+    ordem = models.IntegerField(default=0)
     def __str__(self):
         return self.titulo
+
+class TCPO(models.Model):
+    indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE, related_name='tcpos')
+    referencia = models.ForeignKey(Referencia, on_delete=models.CASCADE)
+    valor = models.FloatField()
 
 class Resultado(models.Model):
     empreendimento = models.ForeignKey(Empreendimento, on_delete=models.CASCADE)
     referencia = models.ForeignKey(Referencia, on_delete=models.CASCADE)
     indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE)
+    campo_indicador = models.ForeignKey(CampoIndicador, on_delete=models.CASCADE)
     conferido_por = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    valor_campo_1 = models.FloatField()
-    valor_campo_2 = models.FloatField()
+    valor = models.TextField(default='')
+    calculado = models.BooleanField(default=False)
+
+class ResultadoCalculado(models.Model):
+    empreendimento = models.ForeignKey(Empreendimento, on_delete=models.CASCADE)
+    referencia = models.ForeignKey(Referencia, on_delete=models.CASCADE)
+    indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE)
+    valor = models.FloatField()

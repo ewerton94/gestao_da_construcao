@@ -18,6 +18,7 @@ const routes = [
   { path: '/bar', component: Bar },
   { path: '/resposta-indicadores', component: RespostaIndicadores },
   { path: '/resultados-indicadores', component: ResultadoIndicadores },
+  { path: '/resultados-indicadores-internos', component: ResultadoIndicadoresParaEmpresa },
   { path: '/empresas', component: Empresas, name:'empresas' },
   { path: '/nova-empresa', component: NovaEmpresa },
   { path: '/editar-empresa/:id', component: EditarEmpresa, name: 'editar-empresa'},
@@ -121,7 +122,7 @@ const app = new Vue({
     show: false
   },
   created(){
-    console.log(this.user.username);
+
     this.get_usuario_logado();
 
   },
@@ -134,9 +135,11 @@ const app = new Vue({
         axios.defaults.withCredentials = true;
 
           axios.get(api_link + 'obtem_usuario_logado/', ).then(response => {
+            //console.log(response.data)
           this.user = response.data.user;
+          localStorage.setItem('user', JSON.stringify(this.user) || '{}');
           this.pronto = true;
-          console.log(response.data.pesquisador)
+
           localStorage.setItem('user-pesquisador', response.data.pesquisador || 0);
 this.cliente = response.data.cliente || 0;
 this.pesquisador = response.data.pesquisador || 0;
@@ -146,13 +149,13 @@ this.pesquisador = response.data.pesquisador || 0;
           localStorage.removeItem('user-pesquisador');
           localStorage.removeItem('user-cliente');
 
-        console.log(e)
+  
         this.pronto = true;
       })
 
     },
     login(){
-      console.log('login')
+   
       axios.post(api_link + 'entrar/', this.model)
       .then(response => {
           this.success.push('Cliente ' + response.data.nome + ' editada com sucesso!')
@@ -162,7 +165,7 @@ this.pesquisador = response.data.pesquisador || 0;
 
       })
       .catch(e => {
-        console.log()
+
         this.errors.push(e)
         localStorage.removeItem('user-token');
       })
@@ -171,14 +174,14 @@ this.pesquisador = response.data.pesquisador || 0;
     logout(){
       axios.get(api_link + 'sair/')
       .then(response => {
-          console.log(response.data)
+ 
           localStorage.removeItem('user-token');
           window.location.reload();
 
 
       })
       .catch(e => {
-        console.log()
+
         this.errors.push(e)
         localStorage.removeItem('user-token');
         window.location.reload();
