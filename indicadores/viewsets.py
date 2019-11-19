@@ -6,6 +6,11 @@ from .serializers import ClienteSerializer, UserSerializer, EmpresaSerializer, E
 from rest_framework.permissions import AllowAny
 import pandas as pd
 import numpy as np
+from rest_framework import status
+from construction_manager.permissions import CustomPermission
+from url_filter.filtersets import ModelFilterSet
+from url_filter.integrations.drf import DjangoFilterBackend
+
 
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
@@ -14,6 +19,7 @@ class ClienteViewSet(viewsets.ModelViewSet):
 class EmpresaViewSet(viewsets.ModelViewSet):
     queryset = Empresa.objects.all()
     serializer_class = EmpresaSerializer
+    permission_classes = (CustomPermission,)
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -22,25 +28,39 @@ class UserViewSet(viewsets.ModelViewSet):
 class EmpreendimentoViewSet(viewsets.ModelViewSet):
     queryset = Empreendimento.objects.all()
     serializer_class = EmpreendimentoSerializer
+    permission_classes = (CustomPermission,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('empresa', )
+
+    def get_queryset(self):
+        r = super(EmpreendimentoViewSet, self).get_queryset()
+        if not self.request.user.is_staff:
+            r = r.filter(empresa=self.request.user.cliente.empresa)
+        return r
+
+    
 
 class ReferenciaViewSet(viewsets.ModelViewSet):
-    queryset = Referencia.objects.all()
+    queryset = Referencia.objects.filter(situacao=True)
     serializer_class = ReferenciaSerializer
+    permission_classes = (CustomPermission,)
 
 class TipoIndicadorViewSet(viewsets.ModelViewSet):
     queryset = TipoIndicador.objects.all()
     serializer_class = TipoIndicadorSerializer
+    permission_classes = (CustomPermission,)
 
 class IndicadorViewSet(viewsets.ModelViewSet):
     queryset = Indicador.objects.all()
     serializer_class = IndicadorSerializer
-from url_filter.filtersets import ModelFilterSet
-from url_filter.integrations.drf import DjangoFilterBackend
+    permission_classes = (CustomPermission,)
+
 
 class ResultadoCalculadoFilter(ModelFilterSet):
     class Meta(object):
         model = ResultadoCalculado
         fields = ('referencia', 'empreendimento')
+        
 
 
 class ResultadoViewSet(viewsets.ModelViewSet):
@@ -48,28 +68,54 @@ class ResultadoViewSet(viewsets.ModelViewSet):
     serializer_class = ResultadoCalculadoSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('referencia', 'empreendimento')
-    permission_classes = (AllowAny,)
+    permission_classes = (CustomPermission,)
 
     def get_queryset(self):
         qs = super(ResultadoViewSet, self).get_queryset()
         return ResultadoCalculadoFilter(data=self.request.GET, queryset=qs).filter()
 
-    @action(detail=True)
-    def por_empresa(self, request, pk=None):
-        queryset = self.get_queryset().filter(empreendimento__empresa_id=pk) # pk will be the video name
+    @action(detail=False)
+    def por_empresa(self, request):
+        if request.user.is_staff:
+            queryset = self.get_queryset()
+        else:
+            cliente = Cliente.objects.filter(user=request.user)
+            if cliente:
+                empresa = cliente.first().empresa
+                queryset = self.get_queryset().filter(empreendimento__empresa=empresa)
+            else:
+                return Response('Não permitido', status=status.HTTP_400_BAD_REQUEST)
         resultado = []
-        print(queryset.values_list('empreendimento__nome', 'empreendimento_id', 'indicador__ordem').distinct())
-        for nome, id, ordem in queryset.values_list('empreendimento__nome', 'empreendimento_id').distinct():
-            lista = queryset.filter(empreendimento_id=id).values_list('referencia__texto', 'valor')
+        DIC_TCPO = {(t.referencia_id, t.indicador_id): t.valor for t in TCPO.objects.filter()}
+        
+        for nome, id, ordem in queryset.values_list('indicador__titulo', 'indicador_id', 'indicador__ordem').distinct():
+            cols = ['empreendimento__nome', 'referencia_id', 'referencia__texto', 'valor']
+            lista = queryset.filter(indicador_id=id).values_list(*cols)
+            calculados = pd.DataFrame(lista, columns=cols)
+            calculados['TCPO'] = calculados['referencia_id'].apply(lambda x: DIC_TCPO.get((int(x), int(id)), ''))
+            calculados = calculados.groupby('empreendimento__nome')
+            dados = zip(calculados['TCPO'].apply(list).values, calculados['valor'].apply(list).values, calculados['referencia__texto'].apply(list).values)
+            emps = calculados.max().index
+            dados = zip(emps, dados)
+            
+
+            
+            #print(calculados)
+            #print(calculados.mean())
             d = {
                 'nome': nome,
                 'ordem': ordem,
-                'legendas': [ref for ref, val in lista],
-                'valores': [val for ref, val in lista],
+                'dados': [{
+                    'empreendimento': empreendimento,
+                    'legendas': d[2],
+                    'valores': d[1],
+                    'tcpo': d[0]
+                    } for empreendimento, d in dados
+                ],
+                
             }
             resultado.append(d)
-        print(sorted(resultado, key=lambda x: x['ordem']))
-        return Response(sorted(resultado, key=lambda x: x.ordem))
+        return Response(sorted(resultado, key=lambda x: x['ordem']))
 
     
 
@@ -77,12 +123,12 @@ class ResultadoViewSet(viewsets.ModelViewSet):
     def por_referencia(self, request):
         queryset = self.get_queryset() # pk will be the video name
         resultado = []
+        DIC_TCPO = {(t.referencia_id, t.indicador_id): t.valor for t in TCPO.objects.filter()}
         for nome, id, ordem in queryset.values_list('indicador__titulo', 'indicador_id', 'indicador__ordem').distinct():
             cols = ['empreendimento__codigo', 'referencia_id', 'valor']
             lista = queryset.filter(indicador_id=id).values_list(*cols)
             calculados = pd.DataFrame(list(lista), columns=cols)
-            DIC_TCPO = {(t.referencia_id, t.indicador_id): t.valor for t in TCPO.objects.filter()}
-            print()
+            
             calculados['TCPO'] = calculados['referencia_id'].apply(lambda x: DIC_TCPO.get((int(x), int(id)), np.nan))
             calculados = calculados.groupby('empreendimento__codigo').mean()
             calculados = calculados.fillna('')

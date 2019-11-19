@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login as auth_login
 
-from .forms import ClienteForm, UserForm, EmpresaForm, EmpreendimentoForm, ReferenciaForm, TipoIndicadorForm, PesquisadorForm, IndicadorForm, ResultadoForm
+from .forms import EmpreendimentoRestritoForm, ClienteForm, UserForm, EmpresaForm, EmpreendimentoForm, ReferenciaForm, TipoIndicadorForm, PesquisadorForm, IndicadorForm, ResultadoForm
 from .schemas import get_schema
 from .exceptions import *
 from .serializers import ClienteSerializer, UserSerializer, EmpresaSerializer, EmpreendimentoSerializer, ReferenciaSerializer, TipoIndicadorSerializer, IndicadorSerializer, ResultadoSerializer, PesquisadorSerializer
@@ -17,7 +17,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 
 
-def generic_create_view(request, Model, Serializer, Form):
+def generic_create_view(request, Model, Serializer, Form, verificar_empresa_cliente=False):
+    if verificar_empresa_cliente:
+        request.data['empresa'] = request.user.cliente.empresa.id
+        print(request.data)
     if request.method == 'POST':
         serializer = Serializer(data=request.data)
         print(dir(serializer))
@@ -180,11 +183,15 @@ def form_editar_empresas(request, id):
 
 @api_view(['GET','POST'])
 def criar_empreendimento(request):
-    return generic_create_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm)
-
+    if request.user.is_staff:
+        return generic_create_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm)
+    return generic_create_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoRestritoForm, True)
+    
 @api_view(['GET','POST'])
 def editar_empreendimento(request, id):
-    return generic_update_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm, id)
+    if request.user.is_staff:
+        return generic_update_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoForm, id)
+    return generic_update_view(request, Empreendimento, EmpreendimentoSerializer, EmpreendimentoRestritoForm, id)
 
 #CLIENTE
 
@@ -321,7 +328,10 @@ def form_indicadores(request):
 
     if request.method == 'GET':
         forms_tipos = []
-        form = ResultadoForm()
+        if request.user.is_staff:
+            form = ResultadoForm(empresa=None)
+        else:
+            form = ResultadoForm(empresa=request.user.cliente.empresa)
         schema = get_schema(form)
         fields = []
         for f in schema['schema']['fields']:
