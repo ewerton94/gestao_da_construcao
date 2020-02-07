@@ -28,7 +28,7 @@
 
 
 
-    <link rel="stylesheet" type="text/css" href="http://unpkg.com/vue-form-generator@2.3.4/dist/vfg.css">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/vue-form-generator@2.3.4/dist/vfg.css">
 
 <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
 
@@ -43,7 +43,7 @@
 
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 
-    <script type="text/javascript" src="http://unpkg.com/vue-form-generator@2.3.4"></script>
+    <script type="text/javascript" src="https://unpkg.com/vue-form-generator@2.3.4/dist/vfg.js"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -98,14 +98,14 @@
                   </v-list-tile-content>
                 </v-list-tile>
 
-            <v-list-tile :href="'#/resposta-indicadores'">
-              <v-list-tile-action>
-                <v-icon>contact_mail</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>Responder</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
+                <v-list-tile v-if="cliente > 0" :href="'#/resposta-indicadores'">
+                    <v-list-tile-action>
+                      <v-icon>send</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                      <v-list-tile-title>Enviar resultados</v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
           </v-list>
         </v-navigation-drawer>
         <v-toolbar color="indigo" dark fixed app>
@@ -670,8 +670,8 @@ if (state.token) {
 
 }
 
-    //const api_link = 'https://indicadoresufal.pythonanywhere.com/';
-    const api_link = 'http://localhost:8000/';
+    const api_link = 'https://indicadoresufal.pythonanywhere.com/';
+    //const api_link = 'http://localhost:8000/';
 a = {};
 
   </script>

@@ -128,8 +128,8 @@ var Empreendimentos = Vue.component("listar-empreendimento-view", {
 
 
                       <h3>Dados:</h3>
-                        <p>Empresa: {{ empreendimento.empresa }}</p>
-                        <p>Local: {{ empreendimento.empresa.nome }}</p>
+                        <p>Empresa: {{ empreendimento.nome_empresa }}</p>
+                        <p>Endereço: {{ empreendimento.endereco }}</p>
                      
                         
 
