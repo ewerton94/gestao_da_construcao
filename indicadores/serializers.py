@@ -21,6 +21,7 @@ class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
 
 class EmpreendimentoSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
+    nome_empresa = serializers.CharField(source='empresa.nome', read_only=True)
     class Meta:
         model = Empreendimento
         fields = '__all__'

@@ -86,6 +86,7 @@ class ResultadoViewSet(viewsets.ModelViewSet):
             else:
                 return Response('Não permitido', status=status.HTTP_400_BAD_REQUEST)
         resultado = []
+        DIC_REFERENCIA = {r.texto: r.id for r in Referencia.objects.all()}
         DIC_TCPO = {(t.referencia_id, t.indicador_id): t.valor for t in TCPO.objects.filter()}
         
         for nome, id, ordem in queryset.values_list('indicador__titulo', 'indicador_id', 'indicador__ordem').distinct():
@@ -93,8 +94,13 @@ class ResultadoViewSet(viewsets.ModelViewSet):
             lista = queryset.filter(indicador_id=id).values_list(*cols)
             calculados = pd.DataFrame(lista, columns=cols)
             calculados['TCPO'] = calculados['referencia_id'].apply(lambda x: DIC_TCPO.get((int(x), int(id)), ''))
+            calculados = calculados.sort_values(by='referencia_id')
+            print(calculados)
             calculados = calculados.groupby('empreendimento__nome')
-            dados = zip(calculados['TCPO'].apply(list).values, calculados['valor'].apply(list).values, calculados['referencia__texto'].apply(list).values)
+            dados = list(zip(calculados['TCPO'].apply(list).values, calculados['valor'].apply(list).values, calculados['referencia__texto'].apply(list).values))
+            #for i, e in enumerate(dados):
+
+                
             emps = calculados.max().index
             dados = zip(emps, dados)
             
@@ -128,7 +134,7 @@ class ResultadoViewSet(viewsets.ModelViewSet):
             cols = ['empreendimento__codigo', 'referencia_id', 'valor']
             lista = queryset.filter(indicador_id=id).values_list(*cols)
             calculados = pd.DataFrame(list(lista), columns=cols)
-            
+            calculados = calculados.sort_values(by='referencia_id')
             calculados['TCPO'] = calculados['referencia_id'].apply(lambda x: DIC_TCPO.get((int(x), int(id)), np.nan))
             calculados = calculados.groupby('empreendimento__codigo').mean()
             calculados = calculados.fillna('')

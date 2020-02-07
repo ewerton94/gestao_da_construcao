@@ -50,6 +50,7 @@ class Cliente(models.Model):
 
 class Empreendimento(models.Model):
     nome = models.CharField(max_length=500)
+    endereco = models.TextField(default='')
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name="empreendimentos")
     codigo = models.CharField(max_length=10, null=True, unique=True, blank=True)
 

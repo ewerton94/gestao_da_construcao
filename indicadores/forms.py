@@ -10,13 +10,13 @@ class EmpreendimentoForm(forms.ModelForm):
 
     class Meta:
         model = Empreendimento
-        fields = ['nome', 'empresa']
+        fields = ['nome', 'empresa', 'endereco']
 
 class EmpreendimentoRestritoForm(forms.ModelForm):
 
     class Meta:
         model = Empreendimento
-        fields = ['nome',]
+        fields = ['nome', 'endereco']
 
 class ClienteForm(forms.ModelForm):
 
