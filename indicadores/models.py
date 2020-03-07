@@ -65,6 +65,7 @@ class Empreendimento(models.Model):
 class Referencia(models.Model):
     texto = models.CharField(max_length=500)
     situacao = models.BooleanField(default=True)
+    ordem = models.IntegerField(default=0)
     def __str__(self):
         return self.texto
 
