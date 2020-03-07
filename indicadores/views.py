@@ -312,6 +312,24 @@ def form_indicadores(request):
         for indicador_id, respostas in indicadores.items():
             r = {}
             for campo_indicador_id, resposta in respostas.items():
+                enc = Resultado.objects.filter(
+                    conferido_por_id=request.user.cliente.id,
+                    referencia_id=data['referencia'],
+                    empreendimento_id=data['empreendimento'],
+                    indicador_id=indicador_id,
+                    campo_indicador_id=campo_indicador_id,
+                    calculado=True
+                )
+                if enc.exists():
+                    return Response({'message': "Estas informações já foram calculadas, nada alterado"}, status=status.HTTP_400_BAD_REQUEST)
+                Resultado.objects.filter(
+                    conferido_por_id=request.user.cliente.id,
+                    referencia_id=data['referencia'],
+                    empreendimento_id=data['empreendimento'],
+                    indicador_id=indicador_id,
+                    campo_indicador_id=campo_indicador_id,
+                    calculado=False
+                ).delete()
                 Resultado.objects.create(
                     conferido_por_id=request.user.cliente.id,
                     referencia_id=data['referencia'],
