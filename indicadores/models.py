@@ -63,6 +63,8 @@ class Empreendimento(models.Model):
         self.save()
 
 class Referencia(models.Model):
+    class Meta:
+        ordering = ['ordem', 'id']
     texto = models.CharField(max_length=500)
     situacao = models.BooleanField(default=True)
     ordem = models.IntegerField(default=0)
