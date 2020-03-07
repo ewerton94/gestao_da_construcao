@@ -116,7 +116,13 @@ class Resultado(models.Model):
     campo_indicador = models.ForeignKey(CampoIndicador, on_delete=models.CASCADE)
     conferido_por = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     valor = models.TextField(default='')
+    error = models.BooleanField(default=False)
     calculado = models.BooleanField(default=False)
+
+    def save(self):
+        if self.valor is None:
+            self.valor = '0'
+        super(Resultado, self).save()
 
 class ResultadoCalculado(models.Model):
     empreendimento = models.ForeignKey(Empreendimento, on_delete=models.CASCADE)
