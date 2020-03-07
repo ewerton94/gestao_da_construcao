@@ -122,10 +122,10 @@ class Resultado(models.Model):
     error = models.BooleanField(default=False)
     calculado = models.BooleanField(default=False)
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.valor is None:
             self.valor = '0'
-        super(Resultado, self).save()
+        super(Resultado, self).save(*args, **kwargs)
 
 class ResultadoCalculado(models.Model):
     empreendimento = models.ForeignKey(Empreendimento, on_delete=models.CASCADE)
