@@ -90,12 +90,13 @@ class ResultadoViewSet(viewsets.ModelViewSet):
         DIC_TCPO = {(t.referencia_id, t.indicador_id): t.valor for t in TCPO.objects.filter()}
         
         for nome, id, ordem in queryset.values_list('indicador__titulo', 'indicador_id', 'indicador__ordem').distinct():
-            cols = ['empreendimento__nome', 'referencia_id', 'referencia__texto', 'valor']
+            cols = ['empreendimento__nome', 'referencia_id', 'referencia__ordem', 'referencia__texto', 'valor']
             lista = queryset.filter(indicador_id=id).values_list(*cols)
             calculados = pd.DataFrame(lista, columns=cols)
             calculados['TCPO'] = calculados['referencia_id'].apply(lambda x: DIC_TCPO.get((int(x), int(id)), ''))
-            calculados = calculados.sort_values(by='referencia_id')
+            calculados = calculados.sort_values(by=['referencia__ordem', 'referencia_id'])
             print(calculados)
+            del calculados['referencia__ordem']
             calculados = calculados.groupby('empreendimento__nome')
             dados = list(zip(calculados['TCPO'].apply(list).values, calculados['valor'].apply(list).values, calculados['referencia__texto'].apply(list).values))
             #for i, e in enumerate(dados):
