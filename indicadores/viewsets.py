@@ -93,6 +93,8 @@ class ResultadoViewSet(viewsets.ModelViewSet):
             cols = ['empreendimento__nome', 'referencia_id', 'referencia__ordem', 'referencia__texto', 'valor']
             lista = queryset.filter(indicador_id=id).values_list(*cols)
             calculados = pd.DataFrame(lista, columns=cols)
+            calculados = calculados.sort_values(by=['referencia__ordem', 'referencia_id'])
+            print(str(calculados))
             calculados['TCPO'] = calculados['referencia_id'].apply(lambda x: DIC_TCPO.get((int(x), int(id)), ''))
             calculados = calculados.sort_values(by=['referencia__ordem', 'referencia_id'])
             print(calculados)
