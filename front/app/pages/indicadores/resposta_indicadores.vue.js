@@ -8,7 +8,8 @@ var RespostaIndicadores = Vue.component("resposta-indicadores-view", {
                 validateAfterChanged: false
             },
             errors: [],
-            success: []
+            success: [],
+            loading: true
             
         }
       },
@@ -25,20 +26,38 @@ var RespostaIndicadores = Vue.component("resposta-indicadores-view", {
                     <span class="subheading">Resposta mensal</span>
               
                     <v-divider class="my-3"></v-divider>
-                    <ul v-if="errors && errors.length">
+                    <ul v-if="errors && errors.length" style="list-style-type:none;padding:0;">
                         <li v-for="error of errors">
+                        <v-alert
+                        :value="true"
+                        type="error"
+                        >
                         {{error.message}}
+                        </v-alert>
                         </li>
                     </ul>
-                    <ul v-if="success && success.length">
-                        
-                        <li style="list-style-type: none;" v-for="message of success">
-                        <div class="alert alert-success">
+
+                    <ul v-if="success && success.length" style="list-style-type:none;padding:0;">
+                        <li v-for="message of success">
+                        <v-alert
+                        :value="true"
+                        type="success"
+                        >
                         {{message}}. <a href="#/" class="alert-link">Voltar ao início</a>.
-                        </div>
-                        
+                        </v-alert>
                         </li>
                     </ul>
+                    <v-flex
+               
+                v-if="loading"
+              >
+                Carregando... <v-progress-circular
+                indeterminate
+                color="primary"
+                
+              ></v-progress-circular>
+              </v-flex>
+                    
                     <div v-if=" !success.length">
                     <div v-for="form of forms" class="my-5">
                     <template >
@@ -57,7 +76,7 @@ var RespostaIndicadores = Vue.component("resposta-indicadores-view", {
                     <vue-form-generator :schema="form.schema" :model="model" :options="formOptions"></vue-form-generator>
 
                     </div>
-                    <v-btn large color="blue" class="mx-0" @click="send">Enviar</v-btn>
+                    <v-btn v-if="!loading" large color="blue" class="mx-0" @click="send">Enviar</v-btn>
                     </div>
                     
                 </v-flex>
@@ -73,35 +92,41 @@ var RespostaIndicadores = Vue.component("resposta-indicadores-view", {
     components:{
         "vue-form-generator": VueFormGenerator.component
     },
-    created() {
+    async created() {
     
-        this.get_form()
+        await this.get_form()
     
     
     },
     methods: {
-        get_form() {
-            axios.get(api_link + 'form_indicadores/').then(response => {
-                this.forms = response.data
-            //this.schema = response.data.schema;
-            console.log(this.forms);
-            //this.model = response.data.model;
+        async get_form() {
+            await axios.get(api_link + 'form_indicadores/').then(async response => {
+                this.forms = await response.data
+                this.loading = false;
+          
         })},
-        send() {
+        async send() {
             this.loading = true;
-            axios.post(api_link + 'form_indicadores/', this.model)
+            await axios.post(api_link + 'form_indicadores/', this.model)
             .then(response => {
+                this.loading = false;
                 app.success = [
                     'Resposta enviada com sucesso!'
                 ];
                 console.log(app.success)
+                this.errors = []
                 this.success.push('Resposta enviada com sucesso!')
                 this.schema = {};
                 this.model = {};
+                $("html, body").animate({ scrollTop: 0 }, "slow");
                 
             })
-            .catch(e => {
-              this.errors.push(e)
+            .catch(async e => {
+                this.loading = false;
+                let data = await e.response.data;
+                console.log(data)
+              this.errors = [data]
+              $("html, body").animate({ scrollTop: 0 }, "slow");
             })
     }}
 });

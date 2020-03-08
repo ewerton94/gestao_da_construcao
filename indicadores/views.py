@@ -9,7 +9,7 @@ from .forms import EmpreendimentoRestritoForm, ClienteForm, UserForm, EmpresaFor
 from .schemas import get_schema
 from .exceptions import *
 from .serializers import ClienteSerializer, UserSerializer, EmpresaSerializer, EmpreendimentoSerializer, ReferenciaSerializer, TipoIndicadorSerializer, IndicadorSerializer, ResultadoSerializer, PesquisadorSerializer
-from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Pesquisador, Indicador, Resultado, ResultadoCalculado
+from .models import Cliente, User, Empresa, Empreendimento, Referencia, TipoIndicador, Pesquisador, Indicador, Resultado, ResultadoCalculado, CampoIndicador
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
@@ -299,18 +299,35 @@ def criar_codigos(request):
 @api_view(['GET','POST'])
 def form_indicadores(request):
     if request.method == 'POST':
+        inds = {i.id: i.campos_necessarios for i in Indicador.objects.all()}
         data = request.data
         fixo = ['conferido_por', 'referencia', 'empreendimento']
         #cliente = Cliente.objects.get(id=data['conferido_por'])
         #referencia = Referencia.objects.get(id=data['referencia'])
         #empreendimento = Empreendimento.objects.get(id=data['empreendimento'])
+        if any([data.get('referencia') is None, data.get('empreendimento') is None]):
+            return Response({'message': "Dados de identificação da resposta ausentes. Lembre-se de escolher a referência e o empreendimento."}, status=status.HTTP_400_BAD_REQUEST)
+
         indicadores = {}
+        achou = False
         for key, value in data.items():
             key = key.split('-')
             if key[0].isdigit():
                 indicadores.setdefault(int(key[0]), {})[key[-1]] = value
+                achou = True
+        if not achou:
+            return Response({'message': "Resposta vazia. Você deve adicionar informações de pelo menos 1 indicador."}, status=status.HTTP_400_BAD_REQUEST)
+
+        for indicador_id, respostas in indicadores.items():
+            for k in inds[indicador_id].split(','):
+                if not k in respostas.keys():
+                    indicador = Indicador.objects.get(id=int(indicador_id))
+                    campo = CampoIndicador.objects.get(id=int(k))
+                    
+                    return Response({'message': "Preencha o formulário corretamente. Está faltando informação do campo %s do indicador %s"%(str(campo.campo), str(indicador))}, status=status.HTTP_400_BAD_REQUEST)
         for indicador_id, respostas in indicadores.items():
             r = {}
+            
             for campo_indicador_id, resposta in respostas.items():
                 enc = Resultado.objects.filter(
                     conferido_por_id=request.user.cliente.id,
@@ -330,7 +347,7 @@ def form_indicadores(request):
                     campo_indicador_id=campo_indicador_id,
                     calculado=False
                 ).delete()
-                Resultado.objects.create(
+                r = Resultado.objects.create(
                     conferido_por_id=request.user.cliente.id,
                     referencia_id=data['referencia'],
                     empreendimento_id=data['empreendimento'],
@@ -338,6 +355,7 @@ def form_indicadores(request):
                     campo_indicador_id=campo_indicador_id,
                     valor=resposta
                 )
+                r.id
 
         return Response('ok')
 

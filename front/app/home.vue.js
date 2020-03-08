@@ -142,6 +142,7 @@ var Home = Vue.component("home-view", {
             })
             .catch(e => {
               console.log(e)
+              $("html, body").animate({ scrollTop: 0 }, "slow");
               this.errors.push(e)
             })
         }

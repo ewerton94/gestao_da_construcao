@@ -40,7 +40,7 @@ var NovoResultado = Vue.component("novo-resultado-view", {
                     </ul>
                     <div v-if="schema.fields && schema.fields.length">
                     <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
-                    <v-btn large color="blue" class="mx-0" @click="send">Criar</v-btn>
+                    <v-btn v-if="!loading" large color="blue" class="mx-0" @click="send">Criar</v-btn>
                     </div>
                 </v-flex>
             </v-layout>
@@ -81,7 +81,7 @@ var NovoResultado = Vue.component("novo-resultado-view", {
                 
             })
             .catch(e => {
-              this.errors.push(e)
+              this.errors.push(e.data.message)
             })
     }}
 });

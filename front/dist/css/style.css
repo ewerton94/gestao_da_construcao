@@ -11,3 +11,7 @@ legend {
 fieldset {
   margin-top: 20px;
 }
+
+.alert-link{
+  color: aliceblue;
+}

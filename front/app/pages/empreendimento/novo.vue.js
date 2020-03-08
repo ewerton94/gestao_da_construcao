@@ -25,8 +25,12 @@ var NovoEmpreendimento = Vue.component("novo-empreendimento-view", {
 
                     <span class="subheading">Cadastro de novo empreendimento</span>
                     <v-divider class="my-3"></v-divider>
-                    <ul v-if="errors && errors.length">
+                    <ul v-if="errors && errors.length" style="list-style-type:none;padding:0;">
                         <li v-for="error of errors">
+                        <v-alert
+                        :value="true"
+                        type="error"
+                        >
                         {{error.message}}
                         </li>
                     </ul>

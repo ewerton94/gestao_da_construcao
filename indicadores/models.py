@@ -2,9 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 import random
 import string
+import re
 
 def rand_slug(n):
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(n))
+
+def obter_campos_necessarios_por_modelo(modelo):
+    campos_necessarios = re.split('-|\+|/|\*', modelo.replace('(', '').replace(')', '').replace(' ', ''))
+
+    return list(campos_necessarios)
+
 
 FUNCAO_TUPLE = (
     ('tecnico', 'Técnico'),
@@ -92,9 +99,17 @@ class TipoIndicador(models.Model):
     titulo = models.CharField(max_length=500)
     modelo = models.CharField(max_length=500, choices=TIPOS_INDICADOR)
     campos = models.ManyToManyField(CampoIndicador, blank=True)
+    
 
     def __str__(self):
         return self.titulo
+
+    def save(self, *args, **kwargs):
+        if self.id:
+            inds = TipoIndicador.objects.get(id=self.id).indicadores.all()
+            for ind in inds:
+                ind.save()
+        super(TipoIndicador, self).save(*args, **kwargs)
 
 class Indicador(models.Model):
     class Meta:
@@ -104,8 +119,19 @@ class Indicador(models.Model):
     descricao = models.TextField()
     unit = models.CharField(max_length=500, default='')
     ordem = models.IntegerField(default=0)
+    campos_necessarios = models.CharField(max_length=500, default='',verbose_name='Campos necessários (Não mexer, atualizado automaticamente)')
     def __str__(self):
         return self.titulo
+
+    def save(self, *args, **kwargs):
+        unit = self.unit
+        campos_necessarios = obter_campos_necessarios_por_modelo(unit)
+        campos = TipoIndicador.objects.get(id=self.tipo_id).campos.filter(nome_variavel__in=campos_necessarios)
+        if campos.count()!=len(campos_necessarios):
+            raise Exception('Campos Necessários configurados em unit não batem com os Campos no Tipo de indicador selecionado.')
+        campos = [str(c.id) for c in campos]
+        self.campos_necessarios = ','.join(campos)
+        super(Indicador, self).save(*args, **kwargs)
 
 class TCPO(models.Model):
     indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE, related_name='tcpos')

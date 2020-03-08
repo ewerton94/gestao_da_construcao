@@ -12,9 +12,14 @@ class MethodNotAllowed(APIException):
     default_detail = 'Requisição HTTP não permitida'
     default_code = 'disciplina_existente'
 
+class MethodNotAllowed(APIException):
+    status_code = 405
+    default_detail = 'Requisição HTTP não permitida'
+    default_code = 'disciplina_existente'
+
 class FormularioInvalido(APIException):
     status_code = 400
-    default_detail = 'Formulário inválido'
+    default_detail = 'Formulário inválido. Confira suas respostas.'
     default_code = 'formulario_invalido'
 
 class HorariosCoincidentes(APIException):
