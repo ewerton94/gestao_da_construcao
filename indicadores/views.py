@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from django.conf import settings
 
 
 def generic_create_view(request, Model, Serializer, Form, verificar_empresa_cliente=False):
@@ -107,7 +108,10 @@ def atualizar_calculos(request):
                                 formula = formula.replace(k, str(v))
                                 #print(k, '=', str(v))
                         #print(formula)
-                        valor = eval(formula)
+                        try:
+                            valor = eval(formula)
+                        except:
+                            valor = 0
                         #print(valor)
                         resultados_calculados.append(ResultadoCalculado(
                             empreendimento_id=empreendimento,
@@ -267,7 +271,21 @@ def editar_pesquisador(request, id):
 
 
 
+from django.core.mail import send_mail
+from itertools import combinations
+import threading
 
+
+class EmailThread(threading.Thread):
+    def __init__(self, subject, html_content, from_email, recipient_list):
+        self.subject = subject
+        self.recipient_list = recipient_list
+        self.html_content = html_content
+        self.from_email = from_email
+        threading.Thread.__init__(self)
+
+    def run (self):
+        send_mail(self.subject, self.html_content, self.from_email, self.recipient_list, fail_silently=True)
 
 
 
@@ -280,7 +298,7 @@ def editar_pesquisador(request, id):
 
 # Ewerton Escreve aqui em baixo:
 from .forms import ResultadoForm
-from .models import Indicador, Cliente, Referencia, Empreendimento, Resultado
+from .models import Indicador, Cliente, Referencia, Empreendimento, Resultado, RegitroErrosEnvios, LogEnvioDeResultado
 
 @api_view(['POST'])
 def criar_codigos(request):
@@ -301,11 +319,21 @@ def form_indicadores(request):
     if request.method == 'POST':
         inds = {i.id: i.campos_necessarios for i in Indicador.objects.all()}
         data = request.data
+        codigo = data.get('codigo')
         fixo = ['conferido_por', 'referencia', 'empreendimento']
         #cliente = Cliente.objects.get(id=data['conferido_por'])
         #referencia = Referencia.objects.get(id=data['referencia'])
         #empreendimento = Empreendimento.objects.get(id=data['empreendimento'])
         if any([data.get('referencia') is None, data.get('empreendimento') is None]):
+            RegitroErrosEnvios.objects.create(
+                conferido_por_id=request.user.cliente.id,
+                referencia_id=data.get('referencia'),
+                empreendimento_id=data.get('empreendimento'),
+                razao="Referência ou Empreendimento Nulo",
+                codigo=codigo
+
+            )
+
             return Response({'message': "Dados de identificação da resposta ausentes. Lembre-se de escolher a referência e o empreendimento."}, status=status.HTTP_400_BAD_REQUEST)
 
         indicadores = {}
@@ -316,6 +344,14 @@ def form_indicadores(request):
                 indicadores.setdefault(int(key[0]), {})[key[-1]] = value
                 achou = True
         if not achou:
+            RegitroErrosEnvios.objects.create(
+                conferido_por_id=request.user.cliente.id,
+                referencia_id=data.get('referencia'),
+                empreendimento_id=data.get('empreendimento'),
+                razao="Resposta vazia",
+                codigo=codigo
+
+            )
             return Response({'message': "Resposta vazia. Você deve adicionar informações de pelo menos 1 indicador."}, status=status.HTTP_400_BAD_REQUEST)
 
         for indicador_id, respostas in indicadores.items():
@@ -323,8 +359,25 @@ def form_indicadores(request):
                 if not k in respostas.keys():
                     indicador = Indicador.objects.get(id=int(indicador_id))
                     campo = CampoIndicador.objects.get(id=int(k))
+                    RegitroErrosEnvios.objects.create(
+                        conferido_por_id=request.user.cliente.id,
+                        referencia_id=data.get('referencia'),
+                        empreendimento_id=data.get('empreendimento'),
+                        razao="Preencha o formulário corretamente. Está faltando informação do campo %s do indicador %s"%(str(campo.campo), str(indicador)),
+                        codigo=codigo
+
+                    )
                     
                     return Response({'message': "Preencha o formulário corretamente. Está faltando informação do campo %s do indicador %s"%(str(campo.campo), str(indicador))}, status=status.HTTP_400_BAD_REQUEST)
+        log = LogEnvioDeResultado.objects.create(
+            conferido_por_id=request.user.cliente.id,
+            referencia_id=data['referencia'],
+            empreendimento_id=data['empreendimento'],
+            dados_iniciais=data,
+            indicadores=indicadores,
+            codigo=codigo
+
+        )
         for indicador_id, respostas in indicadores.items():
             r = {}
             
@@ -335,9 +388,19 @@ def form_indicadores(request):
                     empreendimento_id=data['empreendimento'],
                     indicador_id=indicador_id,
                     campo_indicador_id=campo_indicador_id,
-                    calculado=True
+                    calculado=True,
+                    
                 )
                 if enc.exists():
+                    RegitroErrosEnvios.objects.create(
+                        conferido_por_id=request.user.cliente.id,
+                        referencia_id=data.get('referencia'),
+                        empreendimento_id=data.get('empreendimento'),
+                        razao="Informações já calculadas.",
+                        codigo=codigo
+
+                    )
+                    
                     return Response({'message': "Estas informações já foram calculadas, nada alterado"}, status=status.HTTP_400_BAD_REQUEST)
                 Resultado.objects.filter(
                     conferido_por_id=request.user.cliente.id,
@@ -347,16 +410,31 @@ def form_indicadores(request):
                     campo_indicador_id=campo_indicador_id,
                     calculado=False
                 ).delete()
+                
                 r = Resultado.objects.create(
                     conferido_por_id=request.user.cliente.id,
                     referencia_id=data['referencia'],
                     empreendimento_id=data['empreendimento'],
                     indicador_id=indicador_id,
                     campo_indicador_id=campo_indicador_id,
-                    valor=resposta
+                    valor=resposta,
+                    codigo=codigo
                 )
                 r.id
-
+        
+        log.sucesso = True
+        log.save()
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_list=['ewerton.amorim@live.com',]
+        #send_mail(self.subject, message, from_email, to_list, fail_silently=False)
+        referencia = Referencia.objects.get(id=data['referencia'])
+        empreendimento = Empreendimento.objects.get(id=data['empreendimento'])
+        EmailThread(
+            '[Indicadores para Benchmarking] Dados recebidos com sucesso',
+            'Confirmação automática de recebimento de respostas quanto ao formulário de indicadores:\n\nReferência %s;\nEmpreendimento: %s.\n\nAtenciosamente,\n\nIndicadores para Benchmarking\nCentro de Tecnologia\nUniversidade Federal de Alagoas'%(str(referencia), str(empreendimento)),
+            from_email,
+            to_list
+        ).start()
         return Response('ok')
 
 

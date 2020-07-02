@@ -64,7 +64,7 @@ var Home = Vue.component("home-view", {
                     <v-icon>refresh</v-icon>
                   </v-list-tile-action>
                   <v-list-tile-content>
-                    <v-list-tile-title>Atualziar cálculos</v-list-tile-title>
+                    <v-list-tile-title>Atualizar cálculos</v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
 

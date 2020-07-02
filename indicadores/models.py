@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 import random
 import string
 import re
@@ -147,6 +148,8 @@ class Resultado(models.Model):
     valor = models.TextField(default='')
     error = models.BooleanField(default=False)
     calculado = models.BooleanField(default=False)
+    codigo = models.CharField(max_length=500, null=True, blank=True)
+    data_e_hora = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.valor is None:
@@ -158,3 +161,26 @@ class ResultadoCalculado(models.Model):
     referencia = models.ForeignKey(Referencia, on_delete=models.CASCADE)
     indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE)
     valor = models.FloatField()
+    codigo = models.CharField(max_length=500, null=True, blank=True)
+    data_e_hora = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+class LogEnvioDeResultado(models.Model):
+    empreendimento = models.ForeignKey(Empreendimento, on_delete=models.CASCADE)
+    referencia = models.ForeignKey(Referencia, on_delete=models.CASCADE)
+    conferido_por = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    dados_iniciais = models.TextField(default='')
+    indicadores = models.TextField(default='')
+    codigo = models.CharField(max_length=500, null=True, blank=True)
+    data_e_hora = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    sucesso = models.BooleanField(default=False)
+
+class RegitroErrosEnvios(models.Model):
+    conferido_por = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True, blank=True)
+    empreendimento = models.ForeignKey(Empreendimento, on_delete=models.CASCADE, null=True, blank=True)
+    referencia = models.ForeignKey(Referencia, on_delete=models.CASCADE, null=True, blank=True)
+    data_e_hora = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    razao = models.TextField(default='')
+    codigo = models.CharField(max_length=500, null=True, blank=True)
+
+
+

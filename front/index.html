@@ -129,7 +129,7 @@
                 
                 @click="logout"
               >
-                <v-list-tile-title>Sair</v-list-tile-title>
+                <v-list-tile-title><div v-if="!loading">Sair</div><div v-if="loading">  <img style="height: 1rem;" src="http://portal.ufvjm.edu.br/a-universidade/cursos/grade_curricular_ckan/loading.gif/@@images/image.gif" alt=""></div></v-list-tile-title>
               </v-list-tile>
             </v-list>
           </v-menu>
@@ -216,7 +216,8 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn @click="login" color="primary">Login</v-btn>
+                    <div v-if="!loading"><v-btn @click="login" color="primary">Login</v-btn></div><div v-if="loading">  <img style="height: 1rem;" src="http://portal.ufvjm.edu.br/a-universidade/cursos/grade_curricular_ckan/loading.gif/@@images/image.gif" alt=""></div>
+                    
 
 
 
@@ -670,8 +671,8 @@ if (state.token) {
 
 }
 
-    const api_link = 'https://indicadoresufal.pythonanywhere.com/';
-    //const api_link = 'http://localhost:8000/';
+    //const api_link = 'https://indicadoresufal.pythonanywhere.com/';
+    const api_link = 'http://localhost:8000/';
 a = {};
 
   </script>

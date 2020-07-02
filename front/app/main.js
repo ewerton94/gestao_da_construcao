@@ -119,7 +119,8 @@ const app = new Vue({
     cliente: {},
     pesquisador: {},
     pronto: false,
-    show: false
+    show: false,
+    loading: false
   },
   created(){
 
@@ -155,6 +156,7 @@ this.pesquisador = response.data.pesquisador || 0;
 
     },
     login(){
+      this.loading = true
    
       axios.post(api_link + 'entrar/', this.model)
       .then(response => {
@@ -172,6 +174,7 @@ this.pesquisador = response.data.pesquisador || 0;
 
     },
     logout(){
+      this.loading = true
       axios.get(api_link + 'sair/')
       .then(response => {
  
